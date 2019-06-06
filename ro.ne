@@ -14,19 +14,25 @@ const lexer = moo.compile({
   eqOperator: '==',
   neOperator: '!=',
   number: /[0-9]+/,
-  string: /[a-z]+/,
+  string: /[a-z_]+/,
 });
 %}
 
 @lexer lexer
 
-expression -> %label argument equalityOperation param {% d => d.join('') %}
+expression -> %label argument equalityOperation param {%
+  function(data) {
+    return {
+      [data[0]]: data[3][0]
+    }
+  }
+%}
 argument -> %lparen %ws:* %boolean %ws:* %rparen {% d => d.join('') %} # (true), ( true )
 equalityOperation -> %eqOperator | %neOperator # [==, !=]
 param -> values | singleValue
 values -> %lbracket singleValueWithComma:+ %rbracket {% d => d.join('') %} # [2,35,ab]
 singleValueWithComma -> singleValue %comma:? %ws:* {% d => d.join('') %}
-singleValue -> %string | %number
+singleValue -> %string | %number {% d => d.join('') %}
 
 # string -> [\w]:+
 # number -> [0-9]:+ {%

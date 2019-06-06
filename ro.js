@@ -17,12 +17,18 @@ const lexer = moo.compile({
   eqOperator: '==',
   neOperator: '!=',
   number: /[0-9]+/,
-  string: /[a-z]+/,
+  string: /[a-z_]+/,
 });
 var grammar = {
     Lexer: lexer,
     ParserRules: [
-    {"name": "expression", "symbols": [(lexer.has("label") ? {type: "label"} : label), "argument", "equalityOperation", "param"], "postprocess": d => d.join('')},
+    {"name": "expression", "symbols": [(lexer.has("label") ? {type: "label"} : label), "argument", "equalityOperation", "param"], "postprocess": 
+        function(data) {
+          return {
+            [data[0]]: data[3][0]
+          }
+        }
+        },
     {"name": "argument$ebnf$1", "symbols": []},
     {"name": "argument$ebnf$1", "symbols": ["argument$ebnf$1", (lexer.has("ws") ? {type: "ws"} : ws)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "argument$ebnf$2", "symbols": []},
@@ -41,7 +47,7 @@ var grammar = {
     {"name": "singleValueWithComma$ebnf$2", "symbols": ["singleValueWithComma$ebnf$2", (lexer.has("ws") ? {type: "ws"} : ws)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "singleValueWithComma", "symbols": ["singleValue", "singleValueWithComma$ebnf$1", "singleValueWithComma$ebnf$2"], "postprocess": d => d.join('')},
     {"name": "singleValue", "symbols": [(lexer.has("string") ? {type: "string"} : string)]},
-    {"name": "singleValue", "symbols": [(lexer.has("number") ? {type: "number"} : number)]}
+    {"name": "singleValue", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": d => d.join('')}
 ]
   , ParserStart: "expression"
 }
