@@ -32,11 +32,4 @@ equalityOperation -> %eqOperator | %neOperator # [==, !=]
 param -> values | singleValue
 values -> %lbracket singleValueWithComma:+ %rbracket {% d => d[1].map(d => d[0].value) %} # [2,35,ab]
 singleValueWithComma -> singleValue %comma:? %ws:* {% d => d[0] %}
-singleValue -> %string | %number {% d => [d[0]] %}
-
-# string -> [\w]:+
-# number -> [0-9]:+ {%
-#     function(d) {
-#         return parseInt(d[0].join(''));
-#     }
-# %}
+singleValue -> %string | %number {% d => [d[0].value] %}
