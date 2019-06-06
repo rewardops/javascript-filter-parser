@@ -3,9 +3,12 @@
 const moo = require("moo");
 
 const lexer = moo.compile({
-  WS:     /[ \t]+/,
+  ws:     /[ \t]+/,
   lparen:  '(',
   rparen:  ')',
+  rbracket: ']',
+  lbracket: '[',
+  comma: ',',
   boolean: ['true', 'false'],
   label: ['CATEGORY', 'BRAND'],
   eqOperator: '==',
@@ -17,11 +20,13 @@ const lexer = moo.compile({
 
 @lexer lexer
 
-expression -> %label param equalityOperation value {% d => d.join('') %}
-param -> %lparen %WS:* %boolean %WS:* %rparen {% d => d.join('') %} # (true), ( true )
+expression -> %label argument equalityOperation param {% d => d.join('') %}
+argument -> %lparen %ws:* %boolean %ws:* %rparen {% d => d.join('') %} # (true), ( true )
 equalityOperation -> %eqOperator | %neOperator # [==, !=]
-value -> %string | %number 
-# _ -> [ ]:*
+param -> values | singleValue
+values -> %lbracket singleValueWithComma:+ %rbracket {% d => d.join('') %} # [2,35,ab]
+singleValueWithComma -> singleValue %comma:? %ws:* {% d => d.join('') %}
+singleValue -> %string | %number
 
 # string -> [\w]:+
 # number -> [0-9]:+ {%
