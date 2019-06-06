@@ -17,7 +17,7 @@ const lexer = moo.compile({
   eqOperator: '==',
   neOperator: '!=',
   number: /[0-9]+/,
-  string: /"(?:\\["\\]|[^\n"\\])*"/,
+  string: {match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1)}, // slicing the value removes the extra quotes
 });
 var grammar = {
     Lexer: lexer,
@@ -40,14 +40,14 @@ var grammar = {
     {"name": "param", "symbols": ["singleValue"]},
     {"name": "values$ebnf$1", "symbols": ["singleValueWithComma"]},
     {"name": "values$ebnf$1", "symbols": ["values$ebnf$1", "singleValueWithComma"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "values", "symbols": [(lexer.has("lbracket") ? {type: "lbracket"} : lbracket), "values$ebnf$1", (lexer.has("rbracket") ? {type: "rbracket"} : rbracket)], "postprocess": d => d.join('')},
+    {"name": "values", "symbols": [(lexer.has("lbracket") ? {type: "lbracket"} : lbracket), "values$ebnf$1", (lexer.has("rbracket") ? {type: "rbracket"} : rbracket)], "postprocess": d => d[1].map(d => d[0].value)},
     {"name": "singleValueWithComma$ebnf$1", "symbols": [(lexer.has("comma") ? {type: "comma"} : comma)], "postprocess": id},
     {"name": "singleValueWithComma$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "singleValueWithComma$ebnf$2", "symbols": []},
     {"name": "singleValueWithComma$ebnf$2", "symbols": ["singleValueWithComma$ebnf$2", (lexer.has("ws") ? {type: "ws"} : ws)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "singleValueWithComma", "symbols": ["singleValue", "singleValueWithComma$ebnf$1", "singleValueWithComma$ebnf$2"], "postprocess": d => d.join('')},
+    {"name": "singleValueWithComma", "symbols": ["singleValue", "singleValueWithComma$ebnf$1", "singleValueWithComma$ebnf$2"], "postprocess": d => d[0]},
     {"name": "singleValue", "symbols": [(lexer.has("string") ? {type: "string"} : string)]},
-    {"name": "singleValue", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": d => d.join('')}
+    {"name": "singleValue", "symbols": [(lexer.has("number") ? {type: "number"} : number)], "postprocess": d => [d[0]]}
 ]
   , ParserStart: "expression"
 }

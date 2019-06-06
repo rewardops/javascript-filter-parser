@@ -14,7 +14,7 @@ const lexer = moo.compile({
   eqOperator: '==',
   neOperator: '!=',
   number: /[0-9]+/,
-  string: /"(?:\\["\\]|[^\n"\\])*"/,
+  string: {match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1)}, // slicing the value removes the extra quotes
 });
 %}
 
@@ -30,9 +30,9 @@ expression -> %label argument equalityOperation param {%
 argument -> %lparen %ws:* %boolean %ws:* %rparen {% d => d.join('') %} # (true), ( true )
 equalityOperation -> %eqOperator | %neOperator # [==, !=]
 param -> values | singleValue
-values -> %lbracket singleValueWithComma:+ %rbracket {% d => d.join('') %} # [2,35,ab]
-singleValueWithComma -> singleValue %comma:? %ws:* {% d => d.join('') %}
-singleValue -> %string | %number {% d => d.join('') %}
+values -> %lbracket singleValueWithComma:+ %rbracket {% d => d[1].map(d => d[0].value) %} # [2,35,ab]
+singleValueWithComma -> singleValue %comma:? %ws:* {% d => d[0] %}
+singleValue -> %string | %number {% d => [d[0]] %}
 
 # string -> [\w]:+
 # number -> [0-9]:+ {%
