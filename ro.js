@@ -17,7 +17,7 @@ const lexer = moo.compile({
   eqOperator: '==',
   neOperator: '!=',
   number: /[0-9]+/,
-  string: /[a-z_]+/,
+  string: /"(?:\\["\\]|[^\n"\\])*"/,
 });
 var grammar = {
     Lexer: lexer,
