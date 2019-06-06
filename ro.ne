@@ -1,4 +1,3 @@
-# 'CATEGORY(true)!=123'
 @{%
 const moo = require("moo");
 
