@@ -27,12 +27,13 @@ var grammar = {
           const boolean = data[1] === 'true' ? true : false;
           const equality = data[2][0].value;
           const label = data[0].value;
+          const inclusionKey = equality === '==' ? 'included' : 'excluded';
           let result = {};
           if (label === 'CATEGORY') {
             result[label] = [
               {
                 subcategory: boolean,
-                included: data[3][0]
+                [inclusionKey]: data[3][0]
               }
             ]
           }

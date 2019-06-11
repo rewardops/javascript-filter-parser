@@ -14,12 +14,12 @@ test('can parse a category with a single value excluded', () => {
 });
 
 test('can parse a category with a single value included', () => {
-  const input = 'CATEGORY(true)!=123';
+  const input = 'CATEGORY(true)==123';
   const expectedOutput = {
     CATEGORY: [
       {
         subcategory: true,
-        excluded: ['123'],
+        included: ['123'],
       },
     ],
   };
