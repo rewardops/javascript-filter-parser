@@ -24,16 +24,26 @@ var grammar = {
     ParserRules: [
     {"name": "expression", "symbols": [(lexer.has("label") ? {type: "label"} : label), "argument", "equalityOperation", "param"], "postprocess": 
         function(data) {
-          return {
-            [data[0]]: data[3][0]
+          const boolean = data[1] === 'true' ? true : false;
+          const equality = data[2][0].value;
+          const label = data[0].value;
+          let result = {};
+          if (label === 'CATEGORY') {
+            result[label] = [
+              {
+                subcategory: boolean,
+                included: data[3][0]
+              }
+            ]
           }
+          return result;
         }
         },
     {"name": "argument$ebnf$1", "symbols": []},
     {"name": "argument$ebnf$1", "symbols": ["argument$ebnf$1", (lexer.has("ws") ? {type: "ws"} : ws)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "argument$ebnf$2", "symbols": []},
     {"name": "argument$ebnf$2", "symbols": ["argument$ebnf$2", (lexer.has("ws") ? {type: "ws"} : ws)], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "argument", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "argument$ebnf$1", (lexer.has("boolean") ? {type: "boolean"} : boolean), "argument$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": d => d.join('')},
+    {"name": "argument", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "argument$ebnf$1", (lexer.has("boolean") ? {type: "boolean"} : boolean), "argument$ebnf$2", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": d => d[2].value},
     {"name": "equalityOperation", "symbols": [(lexer.has("eqOperator") ? {type: "eqOperator"} : eqOperator)]},
     {"name": "equalityOperation", "symbols": [(lexer.has("neOperator") ? {type: "neOperator"} : neOperator)]},
     {"name": "param", "symbols": ["values"]},

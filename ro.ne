@@ -21,14 +21,29 @@ const lexer = moo.compile({
 
 expression -> %label argument equalityOperation param {%
   function(data) {
-    return {
-      [data[0]]: data[3][0]
+    const boolean = data[1] === 'true' ? true : false;
+    const equality = data[2][0].value;
+    const label = data[0].value;
+    let result = {};
+    if (label === 'CATEGORY') {
+      result[label] = [
+        {
+          subcategory: boolean,
+          included: data[3][0]
+        }
+      ]
     }
+    return result;
   }
 %}
-argument -> %lparen %ws:* %boolean %ws:* %rparen {% d => d.join('') %} # (true), ( true )
+argument -> %lparen %ws:* %boolean %ws:* %rparen {% d => d[2].value %} # (true), ( true )
 equalityOperation -> %eqOperator | %neOperator # [==, !=]
 param -> values | singleValue
 values -> %lbracket singleValueWithComma:+ %rbracket {% d => d[1].map(d => d[0].value) %} # [2,35,ab]
 singleValueWithComma -> singleValue %comma:? %ws:* {% d => d[0] %}
 singleValue -> %string | %number {% d => [d[0].value] %}
+
+    # return {
+    #   [data[0]]: data[3][0]
+    # }
+    # return data[2][0].value;
