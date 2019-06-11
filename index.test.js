@@ -13,8 +13,17 @@ test("parsing a filter string with a list of category codes works", () => {
   const categoryCode2 = "cat_sys_234234";
   // Strings in the filter definition need to be in quotes
   const input = `CATEGORY(true)==["${categoryCode1}", "${categoryCode2}"]`;
+  // expectedOutput: {
+  //   CATEGORY: {
+  //     subcategory: true,
+  //     includedValues: ["cat_sys_00234", "cat_sys_234234"]
+  //   }
+  // }
   const expectedOutput = {
-    CATEGORY: [categoryCode1, categoryCode2]
+    CATEGORY: {
+      subcategory: true,
+      includedValues: [categoryCode1, categoryCode2]
+    }
   };
   expect(parse(input)).toStrictEqual(expectedOutput);
 });
