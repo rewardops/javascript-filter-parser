@@ -1,5 +1,5 @@
-const nearley = require("nearley");
-const grammar = require("./ro.js");
+const nearley = require('nearley');
+const grammar = require('./ro.js');
 
 function parse(input) {
   // Create a Parser object from our grammar.
@@ -7,8 +7,8 @@ function parse(input) {
   parser.feed(input);
 
   const results = parser.results;
-  if (results.length !== 1) return "Ambigous grammar. Bad!";
+  if (results.length !== 1) return 'Ambigous grammar. Bad!';
 
   return results[0];
 }
-module.exports = parse;
+exports.parse = parse;
