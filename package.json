@@ -9,10 +9,12 @@
     "nearley": "^2.16.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "jest": "^24.8.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "babel --out-dir dist --ignore *.test.js src"
   },
   "author": "yathi",
   "license": "ISC"
