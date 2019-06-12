@@ -10,10 +10,12 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "jest": "^24.8.0"
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
   },
   "scripts": {
     "test": "jest",
+    "prebuild": "rimraf dist",
     "build": "babel --out-dir dist --ignore *.test.js src"
   },
   "author": "yathi",
