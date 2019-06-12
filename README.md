@@ -1,8 +1,34 @@
 # javascript-filter-parser
 
-## Overview
+## Working on the parser
 
-This parser is meant to provide a library with a `parse()` function. This function will consume a filter string of the form:
+This project uses the parser generator by [ Nearley.js ](https://nearley.js.org/). To work on the grammar and to modify the rules, you will need to have Nearley installed on your machine. To achieve that run:
+
+```js
+npm install -g nearley
+```
+
+### Compiling the Grammar to generate the parser
+
+The main file containing the grammar rules are stored in `ro.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
+
+```js
+nearleyc ro.ne -o ro.js
+```
+
+This will generate the parser file `ro.js` which is used by this library.
+
+### Testing in the terminal
+
+If you want to test the generated parser js file against a particular output in the terminal without running the tests through jest, you can run:
+
+```js
+nearley-test ro.js --input "input text"
+```
+
+## Filter Specs
+
+The primary function exported by this library is the `parse()` function. This function will consume a filter string of the form:
 
 ```js
 const filterString =
