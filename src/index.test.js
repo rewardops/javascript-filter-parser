@@ -1,4 +1,4 @@
-const RoParser = require('./index');
+import { parseFilterString } from './index';
 const categoryCode1 = 'cat_sys_00234';
 const categoryCode2 = 'cat_sys_234234';
 
@@ -12,7 +12,7 @@ test('can parse a category with a single value excluded', () => {
       },
     ],
   };
-  expect(RoParser.parse(input)).toStrictEqual(expectedOutput);
+  expect(parseFilterString(input)).toStrictEqual(expectedOutput);
 });
 
 test('can parse a category with a single value included', () => {
@@ -25,7 +25,7 @@ test('can parse a category with a single value included', () => {
       },
     ],
   };
-  expect(RoParser.parse(input)).toStrictEqual(expectedOutput);
+  expect(parseFilterString(input)).toStrictEqual(expectedOutput);
 });
 
 test('parsing a filter string with a list of category codes works', () => {
@@ -39,7 +39,7 @@ test('parsing a filter string with a list of category codes works', () => {
       },
     ],
   };
-  expect(RoParser.parse(input)).toStrictEqual(expectedOutput);
+  expect(parseFilterString(input)).toStrictEqual(expectedOutput);
 });
 
 test('parsing a filter string with a list of category codes works', () => {
@@ -54,5 +54,5 @@ test('parsing a filter string with a list of category codes works', () => {
     ],
   };
 
-  expect(RoParser.parse(input)).toStrictEqual(expectedOutput);
+  expect(parseFilterString(input)).toStrictEqual(expectedOutput);
 });

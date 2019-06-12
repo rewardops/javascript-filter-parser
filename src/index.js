@@ -1,7 +1,7 @@
 const nearley = require('nearley');
 const grammar = require('./ro.js');
 
-function parse(input) {
+export function parseFilterString(input) {
   // Create a Parser object from our grammar.
   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
   parser.feed(input);
@@ -11,4 +11,3 @@ function parse(input) {
 
   return results[0];
 }
-exports.parse = parse;
