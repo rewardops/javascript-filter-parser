@@ -1,4 +1,4 @@
-import { parseFilterString } from './index.js';
+import { parseFilterString } from './ro-filter-parser.js';
 const categoryCode1 = 'cat_sys_00234';
 const categoryCode2 = 'cat_sys_234234';
 

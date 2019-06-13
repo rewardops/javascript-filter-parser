@@ -1,10 +1,9 @@
+const pkg = require('./package.json');
+const libraryName = 'ro-filter-parser';
 export default {
-  input: 'src/index.js',
+  input: `src/${libraryName}.js`,
   output: [
-    {
-      name: 'RoParser',
-      file: 'dist/index.js',
-      format: 'umd',
-    }
+    { file: pkg.main, name: 'RoFilterParser', format: 'umd', sourcemap: true },
+    { file: pkg.module, format: 'es', sourcemap: true },
   ],
 };

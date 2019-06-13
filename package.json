@@ -2,7 +2,8 @@
   "name": "ro-filter-parser",
   "version": "0.1.0",
   "description": "Test parser to work on filters",
-  "main": "dist/index.js",
+  "main": "dist/ro-filter-parser.umd.js",
+  "module": "dist/ro-filter-parser.es5.js",
   "private": true,
   "dependencies": {
     "moo": "^0.5.0",

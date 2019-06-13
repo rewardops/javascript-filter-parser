@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.RoParser = {}));
+  (global = global || self, factory(global.RoFilterParser = {}));
 }(this, function (exports) { 'use strict';
 
   const nearley = require('nearley');
@@ -23,3 +23,4 @@
   Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
+//# sourceMappingURL=ro-filter-parser.umd.js.map
