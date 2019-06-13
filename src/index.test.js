@@ -1,4 +1,4 @@
-import { parseFilterString } from './index';
+import { parseFilterString } from './index.js';
 const categoryCode1 = 'cat_sys_00234';
 const categoryCode2 = 'cat_sys_234234';
 

@@ -2,21 +2,22 @@
   "name": "ro-filter-parser",
   "version": "0.1.0",
   "description": "Test parser to work on filters",
-  "main": "index.js",
+  "main": "dist/index.js",
   "private": true,
   "dependencies": {
     "moo": "^0.5.0",
     "nearley": "^2.16.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "@babel/preset-env": "^7.4.5",
     "jest": "^24.8.0",
-    "rimraf": "^2.6.3"
+    "rimraf": "^2.6.3",
+    "rollup": "^1.15.3"
   },
   "scripts": {
-    "test": "jest",
+    "test": "NODE_ENV=test jest",
     "prebuild": "rimraf dist",
-    "build": "babel --out-dir dist --ignore *.test.js src"
+    "build": "rollup --config"
   },
   "author": "yathi",
   "license": "ISC"
