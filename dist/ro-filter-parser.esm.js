@@ -13,4 +13,4 @@ function parseFilterString(input) {
 }
 
 export { parseFilterString };
-//# sourceMappingURL=ro-filter-parser.es5.js.map
+//# sourceMappingURL=ro-filter-parser.esm.js.map
