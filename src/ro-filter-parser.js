@@ -19,3 +19,40 @@ export function parseFilterString(input) {
 
   return results[0];
 }
+
+/**
+ * This takes in the array of category objects returned by the main parser and converts it into a format which is easier to consume.
+ *
+ * @export
+ * @param {Array} categoryArray - an array of the form:
+ * [
+ *  {subcategory: true, includes: ['abc']}
+ * ]
+ * @returns {object} - a parsed object of the form:
+ * {
+ *  includedWithSubcategories: ['abc'],
+ *  excludedWithSubcategories: [],
+ *  includedWithoutSubcategories: [],
+ *  excludedWithoutSubCategories: [],
+ * }
+ */
+export function simplifyCategory(categoryArray) {
+  return categoryArray.reduce((resultObject, cat) => {
+    if (cat.subcategory) {
+      if (cat.includes) {
+        resultObject.includedWithSubcategories = cat.includes;
+      }
+      if (cat.excludes) {
+        resultObject.excludedWithSubcategories = cat.excludes;
+      }
+    } else {
+      if (cat.includes) {
+        resultObject.includedWithoutSubcategories = cat.includes;
+      }
+      if (cat.excludes) {
+        resultObject.excludedWithoutSubcategories = cat.excludes;
+      }
+    }
+    return resultObject;
+  }, {});
+}
