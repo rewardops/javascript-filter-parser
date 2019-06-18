@@ -16,6 +16,7 @@
     "rollup": "^1.15.3"
   },
   "scripts": {
+    "pretest": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
     "test": "NODE_ENV=test jest",
     "prebuild": "rimraf dist",
     "build": "rollup --config"

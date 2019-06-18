@@ -7,7 +7,8 @@ export function parseFilterString(input) {
   parser.feed(input);
 
   const results = parser.results;
-  if (results.length !== 1) return 'Ambigous grammar. Bad!';
+  if (results.length > 1) return 'Ambigous grammar. Bad!';
+  if (results.length === 0) return 'Empty result. Weird!';
 
   return results[0];
 }
