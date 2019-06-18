@@ -1,3 +1,6 @@
+# Example grammar with postprocessor. This will correctly evaluate simple math expressions with the help of the post processor
+# Compile with: `nearleyc src/grammar/examples/math.ne -o src/compiled-grammar/examples/math.js`
+# Execute with: `nearley-test src/compiled-grammar/examples/math.js --input "2+3*4-1"`
 main -> AS {% d => d[0] %}
 # Parentheses
 P -> "(" AS ")" {% d => d[1] %}
