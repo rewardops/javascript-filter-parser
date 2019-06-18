@@ -1,6 +1,13 @@
 const nearley = require('nearley');
 const grammar = require('./compiled-grammar/main');
 
+/**
+ * The main function of the library. Parses the filter string to return a JSON object
+ *
+ * @export
+ * @param {string} input - the filter string
+ * @returns {object} - a json representation of the string
+ */
 export function parseFilterString(input) {
   // Create a Parser object from our grammar.
   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));

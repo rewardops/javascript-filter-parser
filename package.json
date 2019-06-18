@@ -16,9 +16,10 @@
     "rollup": "^1.15.3"
   },
   "scripts": {
-    "pretest": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
+    "compile": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
+    "pretest": "npm run compile",
     "test": "NODE_ENV=test jest",
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist; npm run compile",
     "build": "rollup --config"
   },
   "author": "yathi",

@@ -25,10 +25,10 @@ combinedExpression -> expression %and expression {%
                         function(data){
                           // combine keys from both the expressions and dedup them.
                           const combinedKeys =  Array.from(new Set([...Object.keys(data[0]), ...Object.keys(data[2])]));
-
                           return combinedKeys.reduce((resultObject, key) => {
                             let valuesFromFirstExpression = [];
                             let valuesFromSecondExpression = [];
+                            // have to handle the case when the values are not actually arrays
                             if (data[0][key] && data[0][key].constructor === Array) {
                               valuesFromFirstExpression = data[0][key];
                             }
