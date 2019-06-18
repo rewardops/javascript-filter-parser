@@ -1,5 +1,5 @@
 const nearley = require('nearley');
-const grammar = require('../src/compiled-grammar/ro');
+const grammar = require('./compiled-grammar/main');
 
 export function parseFilterString(input) {
   // Create a Parser object from our grammar.

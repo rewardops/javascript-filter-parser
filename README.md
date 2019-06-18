@@ -10,32 +10,32 @@ npm install -g nearley
 
 ### Compiling the Grammar to generate the parser
 
-The main file containing the grammar rules are stored in `ro.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
+The main file containing the grammar rules are stored in `src/grammar/main.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
 
 ```js
-nearleyc ro.ne -o ro.js
+nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js
 ```
 
-This will generate the parser file `ro.js` which is used by this library.
+This will generate the parser file `main.js` which is used by this library.
 
 ### Testing in the terminal
 
-If you want to test the generated parser js file against a particular output in the terminal without running the tests through jest, you can run:
+If you want to test the generated parser file against a particular output in the terminal without running the tests through jest, you can run:
 
 ```js
-nearley-test ro.js --input "input text"
+nearley-test src/compiled-grammar/main.js --input "input text"
 ```
 
 ## Filter Specs
 
-The primary function exported by this library is the `parse()` function. This function will consume a filter string of the form:
+The primary function exported by this library is the `parseFilterString()` function. This function will consume a filter string of the form:
 
 ```js
 const filterString =
   "category(true)==['abc','cde']&category(false)==['xyz']&category(true)!=['123']&SIV_ATTRIBUTE(id)==[12,23]&SIV_ATTRIBUTE(id)!=[65,34]";
 ```
 
-So you should be able to call `Lib.parse(filterString)` and it should return a JSON object of the form:
+So you should be able to call `parseFilterString(filterString)` and it should return a JSON object of the form:
 
 ```js
 const filterObject = {
