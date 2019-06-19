@@ -11,18 +11,21 @@ const lexer = moo.compile({
   and: '&',
   or: '|',
   boolean: ['true', 'false'],
-  label: ['CATEGORY', 'BRAND'],
+  label: ['CATEGORY', 'BRAND', 'SIV_ATTRIBUTE'],
+  modifierKeys: ['id'],
   eqOperator: '==',
   neOperator: '!=',
-  number: /[0-9]+/,
+  number: {match: /[0-9]+/, value: n => parseInt(n, 10) },
   string: {match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1)}, // slicing the value removes the extra quotes
 });
 %}
 
 @lexer lexer
 
+parenthesis -> %lparen combinedExpression %rparen {% d => d[0] %} | combinedExpression {% d => d[0] %}
+
 combinedExpression -> expression %and expression {%
-                        function(data){
+                        function(data) {
                           // combine keys from both the expressions and dedup them.
                           const combinedKeys =  Array.from(new Set([...Object.keys(data[0]), ...Object.keys(data[2])]));
                           return combinedKeys.reduce((resultObject, key) => {
@@ -40,10 +43,14 @@ combinedExpression -> expression %and expression {%
                           }, {})
                         }%}
                       | expression {% d => d[0] %}
+                      | expression %or expression {% d => {
+                          return [d[0], d[2]];
+                        }
+                      %}
 
 expression -> %label modifier equalityOperation param {%
                 function(data) {
-                  const boolean = data[1] === 'true' ? true : false;
+                  const modifier = data[1];
                   const equality = data[2][0].value;
                   const label = data[0].value;
                   const inclusionKey = equality === '==' ? 'included' : 'excluded';
@@ -51,21 +58,26 @@ expression -> %label modifier equalityOperation param {%
                   if (label === 'CATEGORY') {
                     result[label] = [
                       {
-                        subcategory: boolean,
+                        subcategory: modifier,
                         [inclusionKey]: data[3][0]
                       }
                     ]
                   }
+                  if (label === 'SIV_ATTRIBUTE') {
+                    result[label] = {
+                      [modifier]: {
+                        [inclusionKey]: data[3][0]
+                      }
+                    }
+                  }
                   return result;
                 }%}
-modifier -> %lparen %ws:* %boolean %ws:* %rparen {% d => d[2].value %} # valid values: (true), ( true )
+modifier -> %lparen %ws:* modifierValue %ws:* %rparen {% d => d[2] %} # valid values: (true), ( true )
+modifierValue -> %boolean {% d => d[0].value === 'true' ? true : false %}
+                | %modifierKeys
 equalityOperation -> %eqOperator | %neOperator # valid value: [==, !=]
-param -> values | singleValue
+param -> values | singleValue {% d => [[d[0][0].value]] %}
+# param -> values | singleValue {% d => [[d[0][0].value]] %}
 values -> %lbracket singleValueWithComma:+ %rbracket {% d => d[1].map(d => d[0].value) %} # [2,35,ab]
 singleValueWithComma -> singleValue %comma:? %ws:* {% d => d[0] %}
-singleValue -> %string | %number {% d => [d[0].value] %}
-
-    # return {
-    #   [data[0]]: data[3][0]
-    # }
-    # return data[2][0].value;
+singleValue -> %string | %number
