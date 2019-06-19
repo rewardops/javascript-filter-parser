@@ -1,5 +1,5 @@
 const nearley = require('nearley');
-const grammar = require('./compiled-grammar/main');
+const grammar = require('../src/compiled-grammar/main');
 
 /**
  * The main function of the library. Parses the filter string to return a JSON object
