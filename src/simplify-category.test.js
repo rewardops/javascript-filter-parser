@@ -7,7 +7,7 @@ test('return includedWithSubcategories correctly', () => {
   const input = [
     {
       subcategory: true,
-      includes: [cat1, cat2],
+      included: [cat1, cat2],
     },
   ];
   const expectedOutput = {
@@ -20,11 +20,11 @@ test('returns included with and without subcategories correctly', () => {
   const input = [
     {
       subcategory: true,
-      includes: [cat1, cat2],
+      included: [cat1, cat2],
     },
     {
       subcategory: false,
-      includes: [cat3],
+      included: [cat3],
     },
   ];
   const expectedOutput = {
@@ -33,3 +33,17 @@ test('returns included with and without subcategories correctly', () => {
   };
   expect(simplifyCategory(input)).toStrictEqual(expectedOutput);
 });
+
+test('return excludedWithSubcategories correctly', () => {
+  const input = [
+    {
+      subcategory: true,
+      excluded: [cat1, cat2],
+    },
+  ];
+  const expectedOutput = {
+    excludedWithSubcategories: [cat1, cat2],
+  };
+  expect(simplifyCategory(input)).toStrictEqual(expectedOutput);
+});
+

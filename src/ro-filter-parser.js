@@ -26,7 +26,7 @@ export function parseFilterString(input) {
  * @export
  * @param {Array} categoryArray - an array of the form:
  * [
- *  {subcategory: true, includes: ['abc']}
+ *  {subcategory: true, included: ['abc']}
  * ]
  * @returns {object} - a parsed object of the form:
  * {
@@ -39,18 +39,18 @@ export function parseFilterString(input) {
 export function simplifyCategory(categoryArray) {
   return categoryArray.reduce((resultObject, cat) => {
     if (cat.subcategory) {
-      if (cat.includes) {
-        resultObject.includedWithSubcategories = cat.includes;
+      if (cat.included) {
+        resultObject.includedWithSubcategories = cat.included;
       }
-      if (cat.excludes) {
-        resultObject.excludedWithSubcategories = cat.excludes;
+      if (cat.excluded) {
+        resultObject.excludedWithSubcategories = cat.excluded;
       }
     } else {
-      if (cat.includes) {
-        resultObject.includedWithoutSubcategories = cat.includes;
+      if (cat.included) {
+        resultObject.includedWithoutSubcategories = cat.included;
       }
-      if (cat.excludes) {
-        resultObject.excludedWithoutSubcategories = cat.excludes;
+      if (cat.excluded) {
+        resultObject.excludedWithoutSubcategories = cat.excluded;
       }
     }
     return resultObject;
