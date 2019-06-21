@@ -22,31 +22,38 @@ const lexer = moo.compile({
   number: {match: /[0-9]+/, value: n => parseInt(n, 10) },
   string: {match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1)}, // slicing the value removes the extra quotes
 });
+
+
+  const mergeData = (data0, data2) => {
+    if (data0.constructor === Array && data2.constructor === Array) {
+      return [...data0, ...data2];
+    }
+    if (data0.constructor === Object && data2.constructor === Object) {
+      return { ...data0, ...data2 };
+    }
+  }
+  // combine keys from both the expressions and dedup them.
+  const combineKeys = (data0, data2) => {
+    const combinedKeys =  Array.from(new Set([...Object.keys(data0), ...Object.keys(data2)]));
+    return combinedKeys.reduce((resultObject, key) => {
+      if (data0[key] && data2[key]) {
+        resultObject[key] = mergeData(data0[key], data2[key]);
+      } else if (data0[key]) {
+        resultObject[key] = data0[key]
+      } else if (data2[key]) {
+        resultObject[key] = data2[key]
+      }
+      return resultObject;
+    }, {})
+  }
 var grammar = {
     Lexer: lexer,
     ParserRules: [
-    {"name": "parenthesis", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "combinedExpression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": d => d[0]},
+    {"name": "parenthesis", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "combinedExpression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": d => d[1]},
     {"name": "parenthesis", "symbols": ["combinedExpression"], "postprocess": d => d[0]},
-    {"name": "combinedExpression", "symbols": ["expression", (lexer.has("and") ? {type: "and"} : and), "expression"], "postprocess": 
-        function(data) {
-          // combine keys from both the expressions and dedup them.
-          const combinedKeys =  Array.from(new Set([...Object.keys(data[0]), ...Object.keys(data[2])]));
-          return combinedKeys.reduce((resultObject, key) => {
-            let valuesFromFirstExpression = [];
-            let valuesFromSecondExpression = [];
-            // have to handle the case when the values are not actually arrays
-            if (data[0][key] && data[0][key].constructor === Array) {
-              valuesFromFirstExpression = data[0][key];
-            }
-            if (data[2][key] && data[2][key].constructor === Array) {
-              valuesFromSecondExpression = data[2][key];
-            }
-            resultObject[key] = [...valuesFromFirstExpression, ...valuesFromSecondExpression];
-            return resultObject;
-          }, {})
-        }},
+    {"name": "combinedExpression", "symbols": ["parenthesis", (lexer.has("and") ? {type: "and"} : and), "parenthesis"], "postprocess": data => combineKeys(data[0], data[2])},
     {"name": "combinedExpression", "symbols": ["expression"], "postprocess": d => d[0]},
-    {"name": "combinedExpression", "symbols": ["expression", (lexer.has("or") ? {type: "or"} : or), "expression"], "postprocess":  d => {
+    {"name": "combinedExpression", "symbols": ["parenthesis", (lexer.has("or") ? {type: "or"} : or), "parenthesis"], "postprocess":  d => {
           return [d[0], d[2]];
         }
                               },

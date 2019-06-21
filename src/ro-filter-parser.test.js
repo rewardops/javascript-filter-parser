@@ -4,6 +4,7 @@ const cat2 = 'cat_sys_123';
 const cat3 = 'cat_sys_cat';
 const siv1 = 123;
 const siv2 = 214;
+const siv3 = 980;
 
 test('can parse a category with a single value excluded', () => {
   const input = 'CATEGORY(true)!=123';
@@ -91,7 +92,7 @@ test('can parse a filter string with just SIV attributes', () => {
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
-test('can parse a definition with categories and SIVs separated by or(|)', () => {
+test('can parse a filter string with categories and SIVs separated by or(|)', () => {
   const filterString = `CATEGORY(true)==["${cat1}","${cat2}","${cat3}"]|SIV_ATTRIBUTE(id)==[${siv1},${siv2}]`;
   const expectedOutput = [
     {
@@ -101,6 +102,66 @@ test('can parse a definition with categories and SIVs separated by or(|)', () =>
       SIV_ATTRIBUTE: { id: { included: [siv1, siv2] } },
     },
   ];
+
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a filter string with & and parenthesis', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1},${siv2}]&(CATEGORY(true)==["${cat1}","${cat2}"])`;
+  const expectedOutput = {
+    CATEGORY: [
+      {
+        subcategory: true,
+        included: [cat1, cat2],
+      },
+    ],
+    SIV_ATTRIBUTE: {
+      id: {
+        excluded: [siv1, siv2],
+      },
+    },
+  };
+
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a single condition surrounded by parenthesis', () => {
+  const input = '(CATEGORY(true)!=123)';
+  const expectedOutput = {
+    CATEGORY: [
+      {
+        subcategory: true,
+        excluded: [123],
+      },
+    ],
+  };
+  expect(parseFilterString(input)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a filter string with parenthesis around each condition', () => {
+  const filterString = `(CATEGORY(true)==["${cat1}","${cat2}","${cat3}"])|(SIV_ATTRIBUTE(id)==[${siv1},${siv2}])`;
+  const expectedOutput = [
+    {
+      CATEGORY: [{ subcategory: true, included: [cat1, cat2, cat3] }],
+    },
+    {
+      SIV_ATTRIBUTE: { id: { included: [siv1, siv2] } },
+    },
+  ];
+
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a rule with two SIV_ATTRIBUTE props', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1},${siv2}]&(SIV_ATTRIBUTE(id)==[${siv3}])`;
+  const expectedOutput = {
+    SIV_ATTRIBUTE: {
+      id: {
+        excluded: [siv1, siv2],
+        included: [siv3],
+      },
+    },
+  };
 
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });

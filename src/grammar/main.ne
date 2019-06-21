@@ -19,31 +19,38 @@ const lexer = moo.compile({
   string: {match: /"(?:\\["\\]|[^\n"\\])*"/, value: s => s.slice(1, -1)}, // slicing the value removes the extra quotes
 });
 %}
-
 @lexer lexer
 
-parenthesis -> %lparen combinedExpression %rparen {% d => d[0] %} | combinedExpression {% d => d[0] %}
+@{%
+  const mergeData = (data0, data2) => {
+    if (data0.constructor === Array && data2.constructor === Array) {
+      return [...data0, ...data2];
+    }
+    if (data0.constructor === Object && data2.constructor === Object) {
+      return { ...data0, ...data2 };
+    }
+  }
+  // combine keys from both the expressions and dedup them.
+  const combineKeys = (data0, data2) => {
+    const combinedKeys =  Array.from(new Set([...Object.keys(data0), ...Object.keys(data2)]));
+    return combinedKeys.reduce((resultObject, key) => {
+      if (data0[key] && data2[key]) {
+        resultObject[key] = mergeData(data0[key], data2[key]);
+      } else if (data0[key]) {
+        resultObject[key] = data0[key]
+      } else if (data2[key]) {
+        resultObject[key] = data2[key]
+      }
+      return resultObject;
+    }, {})
+  }
+%}
 
-combinedExpression -> expression %and expression {%
-                        function(data) {
-                          // combine keys from both the expressions and dedup them.
-                          const combinedKeys =  Array.from(new Set([...Object.keys(data[0]), ...Object.keys(data[2])]));
-                          return combinedKeys.reduce((resultObject, key) => {
-                            let valuesFromFirstExpression = [];
-                            let valuesFromSecondExpression = [];
-                            // have to handle the case when the values are not actually arrays
-                            if (data[0][key] && data[0][key].constructor === Array) {
-                              valuesFromFirstExpression = data[0][key];
-                            }
-                            if (data[2][key] && data[2][key].constructor === Array) {
-                              valuesFromSecondExpression = data[2][key];
-                            }
-                            resultObject[key] = [...valuesFromFirstExpression, ...valuesFromSecondExpression];
-                            return resultObject;
-                          }, {})
-                        }%}
+parenthesis -> %lparen combinedExpression %rparen {% d => d[1] %} | combinedExpression {% d => d[0] %}
+
+combinedExpression -> parenthesis %and parenthesis {% data => combineKeys(data[0], data[2]) %}
                       | expression {% d => d[0] %}
-                      | expression %or expression {% d => {
+                      | parenthesis %or parenthesis {% d => {
                           return [d[0], d[2]];
                         }
                       %}
