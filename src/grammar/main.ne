@@ -47,6 +47,15 @@ const lexer = moo.compile({
   }
 %}
 
+main -> parenthesis {% d => {
+  // If the result is a double array, remove the outer array.
+  if (d.length === 1 && d[0].constructor === Array) {
+    return d[0];
+  } else {
+    return d;
+  }
+} %}
+
 parenthesis -> %lparen combinedExpression %rparen {% d => d[1] %} | combinedExpression {% d => d[0] %}
 
 combinedExpression -> parenthesis %and parenthesis {% data => combineKeys(data[0], data[2]) %}

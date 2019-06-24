@@ -38,28 +38,30 @@ const filterString =
 So you should be able to call `parseFilterString(filterString)` and it should return a JSON object of the form:
 
 ```js
-const filterObject = {
-  category: [
-    {
-      subcategory: true,
-      included: ['abc', 'cde'],
-    },
-    {
-      subcategory: false,
-      included: ['xyz'],
-    },
-    {
-      subcategory: true,
-      excluded: ['123'],
-    },
-  ],
-  SIV_ATTRIBUTE: {
-    ID: {
-      included: [12, 23],
-      excluded: [65, 34],
+const filterObject = [
+  {
+    category: [
+      {
+        subcategory: true,
+        included: ['abc', 'cde'],
+      },
+      {
+        subcategory: false,
+        included: ['xyz'],
+      },
+      {
+        subcategory: true,
+        excluded: ['123'],
+      },
+    ],
+    SIV_ATTRIBUTE: {
+      ID: {
+        included: [12, 23],
+        excluded: [65, 34],
+      },
     },
   },
-};
+];
 ```
 
 If we break it down to smaller chunks, we get:
@@ -81,14 +83,16 @@ const filterString = "category(true)==['abc', 'cde']";
 The resulting JSON for this string should look like:
 
 ```js
-const filterObject = {
-  category: [
-    {
-      subcategory: true,
-      included: ['abc', 'cde'],
-    },
-  ],
-};
+const filterObject = [
+  {
+    category: [
+      {
+        subcategory: true,
+        included: ['abc', 'cde'],
+      },
+    ],
+  },
+];
 ```
 
 #### Removing categories
@@ -104,14 +108,16 @@ Note that the equality operator here is `!=` and not `==`.
 The resulting JSON for this string should look like:
 
 ```js
-const filterObject = {
-  category: [
-    {
-      subcategory: true,
-      excluded: ['xyz', 'pyf'],
-    },
-  ],
-};
+const filterObject = [
+  {
+    category: [
+      {
+        subcategory: true,
+        excluded: ['xyz', 'pyf'],
+      },
+    ],
+  },
+];
 ```
 
 The key here is called `excluded` as opposed to `included` in the previous example.
@@ -132,14 +138,16 @@ const filterString = "category(false)==['abc', 'cde']";
 The parsed JSON object for this string would be:
 
 ```js
-const filterObject = {
-  category: [
-    {
-      subcategory: false,
-      included: ['abc', 'cde'],
-    },
-  ],
-};
+const filterObject = [
+  {
+    category: [
+      {
+        subcategory: false,
+        included: ['abc', 'cde'],
+      },
+    ],
+  },
+];
 ```
 
 The only difference here being that the boolean value for the key `subcategory` is `false`.

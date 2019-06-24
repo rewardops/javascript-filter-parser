@@ -50,6 +50,14 @@ const lexer = moo.compile({
 var grammar = {
     Lexer: lexer,
     ParserRules: [
+    {"name": "main", "symbols": ["parenthesis"], "postprocess":  d => {
+          // If the result is a double array, remove the outer array.
+          if (d.length === 1 && d[0].constructor === Array) {
+            return d[0];
+          } else {
+            return d;
+          }
+        } },
     {"name": "parenthesis", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "combinedExpression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": d => d[1]},
     {"name": "parenthesis", "symbols": ["combinedExpression"], "postprocess": d => d[0]},
     {"name": "combinedExpression", "symbols": ["parenthesis", (lexer.has("and") ? {type: "and"} : and), "parenthesis"], "postprocess": data => combineKeys(data[0], data[2])},
@@ -104,7 +112,7 @@ var grammar = {
     {"name": "singleValue", "symbols": [(lexer.has("string") ? {type: "string"} : string)]},
     {"name": "singleValue", "symbols": [(lexer.has("number") ? {type: "number"} : number)]}
 ]
-  , ParserStart: "parenthesis"
+  , ParserStart: "main"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
    module.exports = grammar;
