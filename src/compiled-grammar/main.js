@@ -29,9 +29,10 @@ const lexer = moo.compile({
       return [...data0, ...data2];
     }
     if (data0.constructor === Object && data2.constructor === Object) {
-      return { ...data0, ...data2 };
+      return combineKeys(data0, data2);
     }
   }
+
   // combine keys from both the expressions and dedup them.
   const combineKeys = (data0, data2) => {
     const combinedKeys =  Array.from(new Set([...Object.keys(data0), ...Object.keys(data2)]));
