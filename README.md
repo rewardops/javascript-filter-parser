@@ -38,7 +38,7 @@ const filterString =
 So you should be able to call `parseFilterString(filterString)` and it should return a JSON object of the form:
 
 ```js
-const filterObject = [
+const filterArray = [
   {
     category: [
       {
@@ -83,7 +83,7 @@ const filterString = "category(true)==['abc', 'cde']";
 The resulting JSON for this string should look like:
 
 ```js
-const filterObject = [
+const filterArray = [
   {
     category: [
       {
@@ -108,7 +108,7 @@ Note that the equality operator here is `!=` and not `==`.
 The resulting JSON for this string should look like:
 
 ```js
-const filterObject = [
+const filterArray = [
   {
     category: [
       {
@@ -138,7 +138,7 @@ const filterString = "category(false)==['abc', 'cde']";
 The parsed JSON object for this string would be:
 
 ```js
-const filterObject = [
+const filterArray = [
   {
     category: [
       {
