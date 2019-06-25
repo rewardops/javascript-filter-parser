@@ -215,13 +215,3 @@ test('can parse a filter string with & and a nested or', () => {
 
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
-
-[
-  [
-    {
-      '0': { CATEGORY: [{ subcategory: true, included: ['cat_123'] }] },
-      '1': { SIV_ATTRIBUTE: { id: { included: [321] } } },
-      SIV_ATTRIBUTE: { id: { excluded: [123] } },
-    },
-  ],
-];
