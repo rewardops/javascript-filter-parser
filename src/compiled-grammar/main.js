@@ -31,6 +31,9 @@ const lexer = moo.compile({
     if (data0.constructor === Object && data2.constructor === Object) {
       return combineKeys(data0, data2);
     }
+    if (data0.constructor === Array || data2.constructor === Array) {
+      return [data0, data2]
+    }
   }
 
   // combine keys from both the expressions and dedup them.
@@ -60,7 +63,7 @@ var grammar = {
         } },
     {"name": "parenthesis", "symbols": [(lexer.has("lparen") ? {type: "lparen"} : lparen), "combinedExpression", (lexer.has("rparen") ? {type: "rparen"} : rparen)], "postprocess": d => d[1]},
     {"name": "parenthesis", "symbols": ["combinedExpression"], "postprocess": d => d[0]},
-    {"name": "combinedExpression", "symbols": ["parenthesis", (lexer.has("and") ? {type: "and"} : and), "parenthesis"], "postprocess": data => combineKeys(data[0], data[2])},
+    {"name": "combinedExpression", "symbols": ["parenthesis", (lexer.has("and") ? {type: "and"} : and), "parenthesis"], "postprocess": data => mergeData(data[0], data[2])},
     {"name": "combinedExpression", "symbols": ["expression"], "postprocess": d => d[0]},
     {"name": "combinedExpression", "symbols": ["parenthesis", (lexer.has("or") ? {type: "or"} : or), "parenthesis"], "postprocess":  d => {
           return [d[0], d[2]];

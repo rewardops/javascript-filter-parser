@@ -29,6 +29,9 @@ const lexer = moo.compile({
     if (data0.constructor === Object && data2.constructor === Object) {
       return combineKeys(data0, data2);
     }
+    if (data0.constructor === Array || data2.constructor === Array) {
+      return [data0, data2]
+    }
   }
 
   // combine keys from both the expressions and dedup them.
@@ -58,7 +61,7 @@ main -> parenthesis {% d => {
 
 parenthesis -> %lparen combinedExpression %rparen {% d => d[1] %} | combinedExpression {% d => d[0] %}
 
-combinedExpression -> parenthesis %and parenthesis {% data => combineKeys(data[0], data[2]) %}
+combinedExpression -> parenthesis %and parenthesis {% data => mergeData(data[0], data[2]) %}
                       | expression {% d => d[0] %}
                       | parenthesis %or parenthesis {% d => {
                           return [d[0], d[2]];
