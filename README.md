@@ -8,6 +8,8 @@ This project uses the parser generator by [ Nearley.js ](https://nearley.js.org/
 npm install -g nearley
 ```
 
+There are a few example grammar files provided in the folder `src/grammar/examples`. Going through these might give the reader an understanding of the grammar syntax and the grammar examples also include instructions on how to test them.
+
 ### Compiling the Grammar to generate the parser
 
 The main file containing the grammar rules are stored in `src/grammar/main.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
