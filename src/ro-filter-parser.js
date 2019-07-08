@@ -56,3 +56,7 @@ export function simplifyCategory(categoryArray) {
     return resultObject;
   }, {});
 }
+
+export function addToFilter(definition, newFilter) {
+  
+}
