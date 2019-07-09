@@ -5,13 +5,13 @@ const grammar = require('../src/compiled-grammar/main');
  * The main function of the library. Parses the filter string to return a JSON object
  *
  * @export
- * @param {string} input - the filter string
+ * @param {string} filterString - the filter string
  * @returns {object} - a json representation of the string
  */
-export function parseFilterString(input) {
+export function parseFilterString(filterString) {
   // Create a Parser object from our grammar.
   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-  parser.feed(input);
+  parser.feed(filterString);
 
   const results = parser.results;
   if (results.length > 1) return 'Ambigous grammar. Bad!';
@@ -55,8 +55,4 @@ export function simplifyCategory(categoryArray) {
     }
     return resultObject;
   }, {});
-}
-
-export function addToFilter(definition, newFilter) {
-  
 }
