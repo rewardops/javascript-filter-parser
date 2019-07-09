@@ -77,12 +77,22 @@ var grammar = {
           const inclusionKey = equality === '==' ? 'included' : 'excluded';
           let result = {};
           if (label === 'CATEGORY') {
-            result[label] = [
-              {
-                subcategory: modifier,
-                [inclusionKey]: data[3][0]
+            result[label] = {};
+            if (modifier) {
+              if (inclusionKey === 'included') {
+                result[label].includedWithSubcategories = data[3][0];
               }
-            ]
+              if (inclusionKey === 'excluded') {
+                result[label].excludedWithSubcategories = data[3][0];
+              }
+            } else {
+              if (inclusionKey === 'included') {
+                result[label].includedWithoutSubcategories = data[3][0];
+              }
+              if (inclusionKey === 'excluded') {
+                result[label].excludedWithoutSubcategories = data[3][0];
+              }
+            }
           }
           if (label === 'SIV_ATTRIBUTE') {
             result[label] = {

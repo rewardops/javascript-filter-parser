@@ -10,12 +10,9 @@ test('can parse a category with a single value excluded', () => {
   const filterString = 'CATEGORY(true)!=123';
   const expectedOutput = [
     {
-      CATEGORY: [
-        {
-          subcategory: true,
-          excluded: [123],
-        },
-      ],
+      CATEGORY: {
+        excludedWithSubcategories: [123],
+      },
     },
   ];
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
@@ -25,70 +22,69 @@ test('can parse a category with a single value included', () => {
   const filterString = 'CATEGORY(true)=="abc"';
   const expectedOutput = [
     {
-      CATEGORY: [
-        {
-          subcategory: true,
-          included: ['abc'],
-        },
-      ],
+      CATEGORY: {
+        includedWithSubcategories: ['abc'],
+      },
     },
   ];
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
-test('parsing a filter string with a list of category codes works', () => {
+test('can parse a filter string with an array of values included with subcategories', () => {
   // Strings in the filter definition need to be in quotes
   const filterString = `CATEGORY(true)==["${cat1}", "${cat2}"]`;
   const expectedOutput = [
     {
-      CATEGORY: [
-        {
-          subcategory: true,
-          included: [cat1, cat2],
-        },
-      ],
+      CATEGORY: {
+        includedWithSubcategories: [cat1, cat2],
+      },
     },
   ];
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
-test('parsing a filter string with a list of category codes works', () => {
+test('can parse a filter string with an array of values included without subcategories', () => {
   const filterString = `CATEGORY(false)==["${cat1}", "${cat2}"]`;
 
   const expectedOutput = [
     {
-      CATEGORY: [
-        {
-          subcategory: false,
-          included: [cat1, cat2],
-        },
-      ],
+      CATEGORY: {
+        includedWithoutSubcategories: [cat1, cat2],
+      },
     },
   ];
 
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
-test('parsing a filter string with both subcategories included and subcategories excluded', () => {
+test('can parse a filter string with both subcategories included and subcategories excluded', () => {
   // Strings in the filter definition need to be in quotes
   const filterString = `CATEGORY(true)==["${cat1}", "${cat2}"]&CATEGORY(false)==["${cat3}"]`;
   const expectedOutput = [
     {
-      CATEGORY: [
-        {
-          subcategory: true,
-          included: [cat1, cat2],
-        },
-        {
-          subcategory: false,
-          included: [cat3],
-        },
-      ],
+      CATEGORY: {
+        includedWithSubcategories: [cat1, cat2],
+        includedWithoutSubcategories: [cat3],
+      },
     },
   ];
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
+test('can parse a filter string with two categories included with subcategories joined with an and', () => {
+  const filterString = `CATEGORY(true)==["${cat1}", "${cat2}"]&CATEGORY(true)==["${cat3}"]`;
+  const expectedOutput = [
+    {
+      CATEGORY: {
+        includedWithSubcategories: [cat1, cat2, cat3],
+      },
+    },
+  ];
+
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+// SIV Attributes
 test('can parse a filter string with just SIV attributes', () => {
   const filterString = `SIV_ATTRIBUTE(id)==[${siv1},${siv2}]`;
   const expectedOutput = [
@@ -108,57 +104,7 @@ test('can parse a filter string with categories and SIVs separated by or(|)', ()
   const filterString = `CATEGORY(true)==["${cat1}","${cat2}","${cat3}"]|SIV_ATTRIBUTE(id)==[${siv1},${siv2}]`;
   const expectedOutput = [
     {
-      CATEGORY: [{ subcategory: true, included: [cat1, cat2, cat3] }],
-    },
-    {
-      SIV_ATTRIBUTE: { id: { included: [siv1, siv2] } },
-    },
-  ];
-
-  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
-});
-
-test('can parse a filter string with & and parenthesis', () => {
-  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1},${siv2}]&(CATEGORY(true)==["${cat1}","${cat2}"])`;
-  const expectedOutput = [
-    {
-      CATEGORY: [
-        {
-          subcategory: true,
-          included: [cat1, cat2],
-        },
-      ],
-      SIV_ATTRIBUTE: {
-        id: {
-          excluded: [siv1, siv2],
-        },
-      },
-    },
-  ];
-
-  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
-});
-
-test('can parse a single condition surrounded by parenthesis', () => {
-  const filterString = '(CATEGORY(true)!=123)';
-  const expectedOutput = [
-    {
-      CATEGORY: [
-        {
-          subcategory: true,
-          excluded: [123],
-        },
-      ],
-    },
-  ];
-  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
-});
-
-test('can parse a filter string with parenthesis around each condition', () => {
-  const filterString = `(CATEGORY(true)==["${cat1}","${cat2}","${cat3}"])|(SIV_ATTRIBUTE(id)==[${siv1},${siv2}])`;
-  const expectedOutput = [
-    {
-      CATEGORY: [{ subcategory: true, included: [cat1, cat2, cat3] }],
+      CATEGORY: { includedWithSubcategories: [cat1, cat2, cat3] },
     },
     {
       SIV_ATTRIBUTE: { id: { included: [siv1, siv2] } },
@@ -184,6 +130,51 @@ test('can parse a rule with two SIV_ATTRIBUTE props', () => {
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
+// Parenthesis
+test('can parse a filter string with & and parenthesis', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1},${siv2}]&(CATEGORY(true)==["${cat1}","${cat2}"])`;
+  const expectedOutput = [
+    {
+      CATEGORY: {
+        includedWithSubcategories: [cat1, cat2],
+      },
+      SIV_ATTRIBUTE: {
+        id: {
+          excluded: [siv1, siv2],
+        },
+      },
+    },
+  ];
+
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a single condition surrounded by parenthesis', () => {
+  const filterString = '(CATEGORY(true)!=123)';
+  const expectedOutput = [
+    {
+      CATEGORY: {
+        excludedWithSubcategories: [123],
+      },
+    },
+  ];
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a filter string with parenthesis around each condition', () => {
+  const filterString = `(CATEGORY(true)==["${cat1}","${cat2}","${cat3}"])|(SIV_ATTRIBUTE(id)==[${siv1},${siv2}])`;
+  const expectedOutput = [
+    {
+      CATEGORY: { includedWithSubcategories: [cat1, cat2, cat3] },
+    },
+    {
+      SIV_ATTRIBUTE: { id: { included: [siv1, siv2] } },
+    },
+  ];
+
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
 test('can parse a filter string with & and a nested or', () => {
   const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}, ${siv2}]&(CATEGORY(true)==["${cat1}","${cat2}"]|SIV_ATTRIBUTE(id)==[${siv3}])`;
   const expectedOutput = [
@@ -196,12 +187,9 @@ test('can parse a filter string with & and a nested or', () => {
     },
     [
       {
-        CATEGORY: [
-          {
-            subcategory: true,
-            included: [cat1, cat2],
-          },
-        ],
+        CATEGORY: {
+          includedWithSubcategories: [cat1, cat2],
+        },
       },
       {
         SIV_ATTRIBUTE: {
