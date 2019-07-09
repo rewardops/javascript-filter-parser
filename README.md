@@ -42,22 +42,13 @@ So you should be able to call `parseFilterString(filterString)` and it should re
 ```js
 const filterArray = [
   {
-    category: [
-      {
-        subcategory: true,
-        included: ['abc', 'cde'],
-      },
-      {
-        subcategory: false,
-        included: ['xyz'],
-      },
-      {
-        subcategory: true,
-        excluded: ['123'],
-      },
-    ],
+    CATEGORY: {
+      includedWithSubcategories: ['abc', 'cde'],
+      includedWithoutSubcategories: ['xyz'],
+      excludedWithSubcategories: ['123'],
+    },
     SIV_ATTRIBUTE: {
-      ID: {
+      id: {
         included: [12, 23],
         excluded: [65, 34],
       },
@@ -87,12 +78,9 @@ The resulting JSON for this string should look like:
 ```js
 const filterArray = [
   {
-    category: [
-      {
-        subcategory: true,
-        included: ['abc', 'cde'],
-      },
-    ],
+    CATEGORY: {
+      includedWithSubcategories: ['abc', 'cde'],
+    },
   },
 ];
 ```
@@ -112,12 +100,9 @@ The resulting JSON for this string should look like:
 ```js
 const filterArray = [
   {
-    category: [
-      {
-        subcategory: true,
-        excluded: ['xyz', 'pyf'],
-      },
-    ],
+    CATEGORY: {
+      excludedWithSubcategories: ['xyz', 'pyf'],
+    },
   },
 ];
 ```
@@ -142,12 +127,9 @@ The parsed JSON object for this string would be:
 ```js
 const filterArray = [
   {
-    category: [
-      {
-        subcategory: false,
-        included: ['abc', 'cde'],
-      },
-    ],
+    CATEGORY: {
+      includedWithoutSubcategories: ['abc', 'cde'],
+    },
   },
 ];
 ```
