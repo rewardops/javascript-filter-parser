@@ -34,7 +34,7 @@ The primary function exported by this library is the `parseFilterString()` funct
 
 ```js
 const filterString =
-  "CATEGORY(true)==['abc','cde']&CATEGORY(false)==['xyz']&CATEGORY(true)!=['123']&SIV_ATTRIBUTE(id)==[12,23]&SIV_ATTRIBUTE(id)!=[65,34]";
+  'CATEGORY(true)==["abc","cde"]&CATEGORY(false)==["xyz"]&CATEGORY(true)!=["123"]&SIV_ATTRIBUTE(id)==[12,23]&SIV_ATTRIBUTE(id)!=[65,34]';
 ```
 
 So you should be able to call `parseFilterString(filterString)` and it should return a JSON object of the form:
@@ -70,7 +70,7 @@ These can be further divided into two types:
 These filter strings are used to show the category codes which are added to the filter. These are filter strings of the form:
 
 ```js
-const filterString = "CATEGORY(true)==['abc', 'cde']";
+const filterString = 'CATEGORY(true)==["abc", "cde"]';
 ```
 
 The resulting JSON for this string should look like:
@@ -90,7 +90,7 @@ const filterArray = [
 Very similar to the previous example but these strings denote category codes which are explicitly removed from the filter. Currently, these filter strings do not exist in the actual data but strings like these are possible. These are filter strings of the form:
 
 ```js
-const filterString = "CATEGORY(true)!=['xyz', 'pyf']";
+const filterString = 'CATEGORY(true)!=["xyz", "pyf"]';
 ```
 
 Note that the equality operator here is `!=` and not `==`.
@@ -119,7 +119,7 @@ A category filter definition where adding or excluding a category only applies t
 They look exactly like their counterparts where the subcategories are included except for the boolean flag. For example, a filter string of this type where you are adding the categories would look like:
 
 ```js
-const filterString = "CATEGORY(false)==['abc', 'cde']";
+const filterString = 'CATEGORY(false)==["abc", "cde"]';
 ```
 
 The parsed JSON object for this string would be:
@@ -135,6 +135,90 @@ const filterArray = [
 ```
 
 The only difference here being that the boolean value for the key `subcategory` is `false`.
+
+### Other Example Filter Strings
+
+#### Items belonging to category codes or certain item IDs
+
+```js
+const filterString = 'CATEGORY(false)==["abc", "cde"]|SIV_ATTRIBUTE(id)==[123, 432]';
+```
+
+The parsed JSON object for this string would be:
+
+```js
+const filterArray = [
+  {
+    CATEGORY: {
+      includedWithoutSubcategories: ['abc', 'cde'],
+    },
+  },
+  {
+    SIV_ATTRIBUTE: {
+      id: {
+        included: [123, 432],
+      },
+    },
+  },
+];
+```
+
+#### Items belonging to category codes but not including certain item IDs
+
+```js
+const filterString = 'SIV_ATTRIBUTE(id)==[123, 432]&(CATEGORY(true)==["pikachu", "raichu"])';
+```
+
+The parsed JSON object for this string would be:
+
+```js
+const filterArray = [
+  {
+    CATEGORY: {
+      includedWithSubcategories: ['pikachu', 'raichu'],
+    },
+    SIV_ATTRIBUTE: {
+      id: {
+        excluded: [123, 432],
+      },
+    },
+  },
+];
+```
+
+#### Items belonging to category codes or item IDs but not including certain item IDs
+
+```js
+const filterString = 'SIV_ATTRIBUTE(id)!=[123, 432]&(CATEGORY(true)==["pikachu", "raichu"]|SIV_ATTRIBUTE(id)==[98])';
+```
+
+The parsed JSON object for this string would be:
+
+```js
+const filterArray = [
+  {
+    SIV_ATTRIBUTE: {
+      id: {
+        excluded: [123, 432],
+      },
+    },
+  },
+  [
+    {
+      CATEGORY: {
+        includedWithSubcategories: ['pikachu', 'raichu'],
+      },
+    },
+    {
+      SIV_ATTRIBUTE: {
+        id: {
+          included: [98],
+        },
+      },
+    },
+  ],
+];
+```
 
 ## Testing
 
