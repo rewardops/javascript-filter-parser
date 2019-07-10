@@ -1,7 +1,7 @@
 import { parseFilterString } from './ro-filter-parser.js';
-const cat1 = 'cat_sys_00234';
-const cat2 = 'cat_sys_123';
-const cat3 = 'cat_sys_cat';
+const cat1 = 'bulbasaur_1';
+const cat2 = 'ivysaur_2';
+const cat3 = 'venosaur_3';
 const siv1 = 123;
 const siv2 = 214;
 const siv3 = 980;
@@ -201,5 +201,33 @@ test('can parse a filter string with & and a nested or', () => {
     ],
   ];
 
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a filter string for category codes or siv ids but not including certain siv IDS', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}, ${siv2}]&(CATEGORY(true)==["${cat1}", "${cat2}"]|SIV_ATTRIBUTE(id)==[${siv3}])`;
+  const expectedOutput = [
+    {
+      SIV_ATTRIBUTE: {
+        id: {
+          excluded: [siv1, siv2],
+        },
+      },
+    },
+    [
+      {
+        CATEGORY: {
+          includedWithSubcategories: [cat1, cat2],
+        },
+      },
+      {
+        SIV_ATTRIBUTE: {
+          id: {
+            included: [siv3],
+          },
+        },
+      },
+    ],
+  ];
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
