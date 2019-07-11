@@ -1,5 +1,6 @@
 const nearley = require('nearley');
 const grammar = require('../src/compiled-grammar/main');
+import { setCategoryCodes, addCategoryCodes } from './util/category';
 
 /**
  * The main function of the library. Parses the filter string to return a JSON object
@@ -33,13 +34,26 @@ export function addToFilter(definition, { label, subtype, values }) {
   return convertObjectToString(parsedFilter);
 }
 
+export function setFilter(definition, { label, subtype, values }) {
+  const parsedFilter = parseFilterString(definition);
+  switch (label) {
+    case 'CATEGORY':
+      parsedFilter[0].CATEGORY = setCategoryCodes(subtype, values);
+      break;
+
+    default:
+      break;
+  }
+  return convertObjectToString(parsedFilter);
+}
+
 function convertObjectToString(filter) {
   if (filter.constructor === Array) {
     return filter.reduce((str, f) => {
       if (str === '') {
         return `(${convertObjectToString(f)})`;
       } else {
-        return `(${string.substring(1, string.length - 1)}|${convertObjectToString(f)})`;
+        return `(${str.substring(1, str.length - 1)}|${convertObjectToString(f)})`;
       }
     }, '');
   }
@@ -55,48 +69,13 @@ function convertObjectToString(filter) {
         })
         .join('&');
     }
-  }
-}
-
-function setFilter(definition, { label, subtype, values }) {
-  const parsedFilter = parseFilterString(definition);
-  switch (label) {
-    case 'CATEGORY':
-      parsedFilter[0].category = setCategory(subtype, values);
-      break;
-
-    default:
-      break;
-  }
-}
-
-function setCategory(subtype, values) {
-  let updatedCat = {};
-  if (subtype === 'subcategory-included') {
-    return (updatedCat.includedWithSubcategories = [...values]);
-  }
-}
-
-const categoryTypes = [
-  'includedWithSubcategories',
-  'includedWithoutSubcategories',
-  'excludedWithSubcategories',
-  'excludedWithoutSubcategories',
-];
-function addCategoryCodes(categoryObject, subtype, values) {
-  // If the value already exists anywhere in categories, remove it
-  categoryTypes.forEach(type => {
-    if (categoryObject[type]) {
-      categoryObject[type] = categoryObject[type].filter(value => !values.includes(value));
+    if (filter.SIV_ATTRIBUTE) {
+      const { id } = filter.SIV_ATTRIBUTE;
+      return Object.keys(id).map(key => {
+        const equalOp = key.includes('include') ? '==' : '!=';
+        const values = id[key].map(value => `${value}`).join(',');
+        return `SIV_ATTRIBUTE(id)${equalOp}[${values}]`;
+      });
     }
-  });
-  if (subtype === 'subcategory-included') {
-    const currentValues = categoryObject.includedWithSubcategories || [];
-    categoryObject.includedWithSubcategories = Array.from(new Set([...currentValues, ...values]));
   }
-  if (subtype === 'subcategory-excluded') {
-    const currentValues = categoryObject.includedWithoutSubcategories || [];
-    categoryObject.includedWithoutSubcategories = Array.from(new Set([...currentValues, ...values]));
-  }
-  return categoryObject;
 }

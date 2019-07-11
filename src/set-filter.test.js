@@ -1,4 +1,4 @@
-import { addToFilter } from './ro-filter-parser.js';
+import { setFilter } from './ro-filter-parser.js';
 const cat1 = 'Pikachu_1';
 const cat2 = 'Raichu_2';
 const cat3 = 'Charizard_3';
@@ -7,35 +7,35 @@ const siv2 = 214;
 const siv3 = 980;
 
 // Category
-test('can add a category code to the filter definition', () => {
-  const filterString = `CATEGORY(true)==["${cat1}"]`;
+test('can set a category code in the filter definition when it already has a category code', () => {
+  const filterString = `CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {
     label: 'CATEGORY',
     subtype: 'subcategory-included',
-    values: [cat2],
+    values: [cat2, cat3],
   };
-  const expectedFilterString = `(CATEGORY(true)==["${cat1}","${cat2}"])`;
-  expect(addToFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+  const expectedFilterString = `(CATEGORY(true)==["${cat2}","${cat3}"])`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
-test('can add a category code to the filter definition when not including subcategory', () => {
+test('can add a category code to the filter definition when the included type is off the same type', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {
     label: 'CATEGORY',
     subtype: 'subcategory-excluded',
-    values: [cat2],
+    values: [cat2, cat3],
   };
-  const expectedFilterString = `(CATEGORY(false)==["${cat1}","${cat2}"])`;
-  expect(addToFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+  const expectedFilterString = `(CATEGORY(false)==["${cat2}","${cat3}"])`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('can add a category code to the filter definition when it also includes SIV ids', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]|SIV_ATTRIBUTE(id)==[${siv1}]`;
   const newFilterObject = {
     label: 'CATEGORY',
     subtype: 'subcategory-excluded',
-    values: [cat2],
+    values: [cat2, cat3],
   };
-  const expectedFilterString = `(CATEGORY(false)==["${cat1}","${cat2}"]|SIV_ATTRIBUTE(id)==[${siv1}])`;
-  expect(addToFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+  const expectedFilterString = `(CATEGORY(false)==["${cat2}","${cat3}"]|SIV_ATTRIBUTE(id)==[${siv1}])`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('can remove a category code from the filter definition', () => {});
 test('can add a category code to the filter definition when it has only SIV attributes', () => {});
