@@ -1,6 +1,7 @@
+import { setCategoryCodes, addCategoryCodes } from './util/category';
+
 const nearley = require('nearley');
 const grammar = require('../src/compiled-grammar/main');
-import { setCategoryCodes, addCategoryCodes } from './util/category';
 
 /**
  * The main function of the library. Parses the filter string to return a JSON object
@@ -14,7 +15,7 @@ export function parseFilterString(filterString) {
   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
   parser.feed(filterString);
 
-  const results = parser.results;
+  const { results } = parser;
   if (results.length > 1) return 'Ambigous grammar. Bad!';
   if (results.length === 0) return 'Empty result. Weird!';
 
@@ -25,7 +26,11 @@ export function addToFilter(definition, { label, subtype, values }) {
   const parsedFilter = parseFilterString(definition);
   switch (label) {
     case 'CATEGORY':
-      parsedFilter[0].CATEGORY = addCategoryCodes(parsedFilter[0].CATEGORY, subtype, values);
+      parsedFilter.forEach((filter, index) => {
+        if (parsedFilter[index].CATEGORY) {
+          parsedFilter[index].CATEGORY = addCategoryCodes(filter.CATEGORY, subtype, values);
+        }
+      });
       break;
 
     default:
@@ -38,7 +43,11 @@ export function setFilter(definition, { label, subtype, values }) {
   const parsedFilter = parseFilterString(definition);
   switch (label) {
     case 'CATEGORY':
-      parsedFilter[0].CATEGORY = setCategoryCodes(subtype, values);
+      parsedFilter.forEach((filter, index) => {
+        if (parsedFilter[index].CATEGORY) {
+          parsedFilter[index].CATEGORY = setCategoryCodes(subtype, values);
+        }
+      });
       break;
 
     default:
@@ -52,15 +61,24 @@ function convertObjectToString(filter) {
     return filter.reduce((str, f) => {
       if (str === '') {
         return `(${convertObjectToString(f)})`;
-      } else {
-        return `(${str.substring(1, str.length - 1)}|${convertObjectToString(f)})`;
       }
+      return `(${str.substring(1, str.length - 1)}|${convertObjectToString(f)})`;
     }, '');
   }
   if (filter.constructor === Object) {
+    const filterArray = [];
+    if (filter.SIV_ATTRIBUTE) {
+      const { id } = filter.SIV_ATTRIBUTE;
+      const filterString = Object.keys(id).map(key => {
+        const equalOp = key.includes('include') ? '==' : '!=';
+        const values = id[key].map(value => `${value}`).join(',');
+        return `SIV_ATTRIBUTE(id)${equalOp}[${values}]`;
+      });
+      filterArray.push(filterString);
+    }
     if (filter.CATEGORY) {
       const { CATEGORY } = filter;
-      return Object.keys(CATEGORY)
+      const filterString = Object.keys(CATEGORY)
         .map(key => {
           const equalOp = key.includes('include') ? '==' : '!=';
           const subcategoryOp = key.includes('Without') ? 'false' : 'true';
@@ -68,14 +86,8 @@ function convertObjectToString(filter) {
           return `CATEGORY(${subcategoryOp})${equalOp}[${values}]`;
         })
         .join('&');
+      filterArray.push(filterString);
     }
-    if (filter.SIV_ATTRIBUTE) {
-      const { id } = filter.SIV_ATTRIBUTE;
-      return Object.keys(id).map(key => {
-        const equalOp = key.includes('include') ? '==' : '!=';
-        const values = id[key].map(value => `${value}`).join(',');
-        return `SIV_ATTRIBUTE(id)${equalOp}[${values}]`;
-      });
-    }
+    return filterArray.join('&');
   }
 }
