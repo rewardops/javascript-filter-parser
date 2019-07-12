@@ -1,4 +1,5 @@
-import { parseFilterString } from './ro-filter-parser.js';
+import { parseFilterString } from './ro-filter-parser';
+
 const cat1 = 'bulbasaur_1';
 const cat2 = 'ivysaur_2';
 const cat3 = 'venosaur_3';

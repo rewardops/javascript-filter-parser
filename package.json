@@ -6,6 +6,7 @@
   "module": "dist/ro-filter-parser.esm.js",
   "private": true,
   "dependencies": {
+    "eslint-config-airbnb": "^17.1.1",
     "moo": "^0.5.0",
     "nearley": "^2.16.0"
   },

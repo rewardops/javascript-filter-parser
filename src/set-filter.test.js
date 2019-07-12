@@ -1,4 +1,5 @@
-import { setFilter } from './ro-filter-parser.js';
+import { setFilter } from './ro-filter-parser';
+
 const cat1 = 'Pikachu_1';
 const cat2 = 'Raichu_2';
 const cat3 = 'Charizard_3';

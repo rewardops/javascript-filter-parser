@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const categoryTypes = [
   'includedWithSubcategories',
   'includedWithoutSubcategories',
@@ -6,7 +7,7 @@ const categoryTypes = [
 ];
 
 export function setCategoryCodes(subtype, values) {
-  let updatedCat = {};
+  const updatedCat = {};
   if (subtype === 'subcategory-included') {
     updatedCat.includedWithSubcategories = [...values];
   }
