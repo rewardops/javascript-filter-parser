@@ -59,7 +59,7 @@ test('can set a category code to the filter definition when it excludes SIV ids'
     subtype: 'subcategory-excluded',
     values: [cat2, cat3],
   };
-  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(false)==["${cat2}","${cat3}"])`;
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(false)==["${cat2}","${cat3}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
@@ -82,18 +82,18 @@ test('can set a category code to the filter definition when it has only SIV attr
     subtype: 'subcategory-included',
     values: [cat2, cat3],
   };
-  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(true)==["${cat2}","${cat3}"])`;
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(true)==["${cat2}","${cat3}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test.only('can set a category code to the filter definition when it has only SIV attributes (SIV Excluded and Included)', () => {
+test('can set a category code to the filter definition when it has only SIV attributes (SIV Excluded and Included)', () => {
   const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&SIV_ATTRIBUTE(id)==[${siv2}]`;
   const newFilterObject = {
     label: 'CATEGORY',
     subtype: 'subcategory-included',
     values: [cat2, cat3],
   };
-  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&(SIV_ATTRIBUTE(id)==[${siv2}]|CATEGORY(true)==["${cat2}","${cat3}"]))`;
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(SIV_ATTRIBUTE(id)==[${siv2}]|CATEGORY(true)==["${cat2}","${cat3}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 

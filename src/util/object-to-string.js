@@ -11,11 +11,13 @@ export default function convertObjectToString(filter) {
     const filterArray = [];
     if (filter.SIV_ATTRIBUTE) {
       const { id } = filter.SIV_ATTRIBUTE;
-      const filterString = Object.keys(id).map(key => {
-        const equalOp = key.includes('include') ? '==' : '!=';
-        const values = id[key].map(value => `${value}`).join(',');
-        return `SIV_ATTRIBUTE(id)${equalOp}[${values}]`;
-      });
+      const filterString = Object.keys(id)
+        .map(key => {
+          const equalOp = key.includes('include') ? '==' : '!=';
+          const values = id[key].map(value => `${value}`).join(',');
+          return `SIV_ATTRIBUTE(id)${equalOp}[${values}]`;
+        })
+        .join('&');
       filterArray.push(filterString);
     }
     if (filter.CATEGORY) {
@@ -29,6 +31,9 @@ export default function convertObjectToString(filter) {
         })
         .join('&');
       filterArray.push(filterString);
+    }
+    if (filter.array) {
+      filterArray.push(convertObjectToString(filter.array));
     }
     return filterArray.join('&');
   }
