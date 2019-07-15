@@ -185,21 +185,21 @@ test('can parse a filter string with & and a nested or', () => {
           excluded: [siv1, siv2],
         },
       },
-    },
-    [
-      {
-        CATEGORY: {
-          includedWithSubcategories: [cat1, cat2],
-        },
-      },
-      {
-        SIV_ATTRIBUTE: {
-          id: {
-            included: [siv3],
+      array: [
+        {
+          CATEGORY: {
+            includedWithSubcategories: [cat1, cat2],
           },
         },
-      },
-    ],
+        {
+          SIV_ATTRIBUTE: {
+            id: {
+              included: [siv3],
+            },
+          },
+        },
+      ],
+    },
   ];
 
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
@@ -214,18 +214,74 @@ test('can parse a filter string for category codes or siv ids but not including 
           excluded: [siv1, siv2],
         },
       },
+      array: [
+        {
+          CATEGORY: {
+            includedWithSubcategories: [cat1, cat2],
+          },
+        },
+        {
+          SIV_ATTRIBUTE: {
+            id: {
+              included: [siv3],
+            },
+          },
+        },
+      ],
     },
-    [
-      {
-        CATEGORY: {
-          includedWithSubcategories: [cat1, cat2],
+  ];
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a filter string for category codes or siv ids but not including certain siv IDS - swapped order', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}, ${siv2}]&(SIV_ATTRIBUTE(id)==[${siv3}]|CATEGORY(true)==["${cat1}", "${cat2}"])`;
+  const expectedOutput = [
+    {
+      SIV_ATTRIBUTE: {
+        id: {
+          excluded: [siv1, siv2],
         },
       },
+      array: [
+        {
+          SIV_ATTRIBUTE: {
+            id: {
+              included: [siv3],
+            },
+          },
+        },
+        {
+          CATEGORY: {
+            includedWithSubcategories: [cat1, cat2],
+          },
+        },
+      ],
+    },
+  ];
+  expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
+});
+
+test('can parse a filter string for category codes or siv ids but not including certain siv IDS - swapped order', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}, ${siv2}]|(SIV_ATTRIBUTE(id)==[${siv3}]|CATEGORY(true)==["${cat1}", "${cat2}"])`;
+  const expectedOutput = [
+    {
+      SIV_ATTRIBUTE: {
+        id: {
+          excluded: [siv1, siv2],
+        },
+      },
+    },
+    [
       {
         SIV_ATTRIBUTE: {
           id: {
             included: [siv3],
           },
+        },
+      },
+      {
+        CATEGORY: {
+          includedWithSubcategories: [cat1, cat2],
         },
       },
     ],

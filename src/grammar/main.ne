@@ -29,8 +29,13 @@ const lexer = moo.compile({
     if (data0.constructor === Object && data2.constructor === Object) {
       return combineKeys(data0, data2);
     }
-    if (data0.constructor === Array || data2.constructor === Array) {
-      return [data0, data2]
+    if (data0.constructor === Array && data2.constructor === Object) {
+      data2.array = data0;
+      return data2;
+    }
+    if (data0.constructor === Object && data2.constructor === Array) {
+      data0.array = data2;
+      return data0;
     }
   }
 
