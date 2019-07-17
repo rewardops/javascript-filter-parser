@@ -84,7 +84,12 @@ export function setFilter(definition, { label, subtype, values }) {
       break;
     }
     case 'SIV': {
-      ({ sivExcludedFilter, parsedFilter } = setSivValues(parsedFilter, sivExcludedFilter, subtype, values));
+      ({ updatedSivExcludedFilter: sivExcludedFilter, parsedFilter } = setSivValues(
+        parsedFilter,
+        sivExcludedFilter,
+        subtype,
+        values,
+      ));
       break;
     }
 

@@ -1,17 +1,14 @@
 /* eslint-disable no-param-reassign */
 export default function setSivValues(parsedFilter, sivExcludedFilter, subtype, values) {
+  let excludedIds = sivExcludedFilter ? sivExcludedFilter.SIV_ATTRIBUTE.id.excluded : [];
   if (subtype === 'id-excluded') {
-    if (sivExcludedFilter) {
-      sivExcludedFilter.SIV_ATTRIBUTE.id.excluded.push(...values);
-    } else {
-      sivExcludedFilter = {
-        SIV_ATTRIBUTE: {
-          id: {
-            excluded: values,
-          },
-        },
-      };
-    }
+    // if (sivExcludedFilter) {
+    //   excludedIds.push(...values);
+    // } else {
+    //   excludedIds = values;
+    // }
+    excludedIds = values;
+    // TODO: Rewrite this so that we don't need param reassign
     parsedFilter.forEach((f, index) => {
       if (parsedFilter[index].SIV_ATTRIBUTE) {
         parsedFilter[index].SIV_ATTRIBUTE.id.included = parsedFilter[index].SIV_ATTRIBUTE.id.included.filter(
@@ -24,5 +21,21 @@ export default function setSivValues(parsedFilter, sivExcludedFilter, subtype, v
       }
     });
   }
-  return { parsedFilter, sivExcludedFilter };
+  if (subtype === 'id-included') {
+    let updated = false;
+    if (sivExcludedFilter) {
+      excludedIds = excludedIds.filter(id => !values.includes(id));
+    }
+    parsedFilter.forEach((f, index) => {
+      if (parsedFilter[index].SIV_ATTRIBUTE && parsedFilter[index].SIV_ATTRIBUTE.id.included) {
+        parsedFilter[index].SIV_ATTRIBUTE.id.included = values;
+        updated = true;
+      }
+    });
+    if (!updated) {
+      parsedFilter.push({ SIV_ATTRIBUTE: { id: { included: values } } });
+    }
+  }
+  const updatedSivExcludedFilter = excludedIds.length ? { SIV_ATTRIBUTE: { id: { excluded: excludedIds } } } : null;
+  return { parsedFilter, updatedSivExcludedFilter };
 }
