@@ -97,9 +97,6 @@ test('can set a category code - when it has only SIV attributes (SIV Excluded an
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-// REMOVING CATEGORY
-test('can remove a category code from the filter definition', () => {});
-
 // SIV
 test('SIV ID - when it does not currently have an SIV ID attribute - included', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]`;
@@ -162,10 +159,7 @@ test('SIV ID - when it currently has an SIV ID attribute excluded', () => {
   const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
-test('SIV ID - when it currently has an SIV ID attribute excluded', () => {});
-test('can remove a SIV ID - when it currently has an SIV ID attribute', () => {});
 
 // Supplier
-test('can set a supplierId - when it does not currently have an supplierId attribute', () => {});
-test('can set a supplierId - when it currently has an supplierId attribute', () => {});
-test('can remove a supplierId - when it currently has an supplierId attribute', () => {});
+test('supplierId - when it does not currently have an supplierId', () => {});
+test('supplierId - when it currently has an supplierId', () => {});
