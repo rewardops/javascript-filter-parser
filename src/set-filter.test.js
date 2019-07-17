@@ -5,7 +5,7 @@ const cat2 = 'Raichu_2';
 const cat3 = 'Charizard_3';
 const siv1 = 123;
 const siv2 = 214;
-// const siv3 = 980;
+const siv3 = 980;
 
 // SETTING CATEGORY WITH INITIAL VALUE
 test('can set a category code in the filter definition when it already has a category code', () => {
@@ -45,10 +45,10 @@ test('can set a category code to the filter definition when it also includes SIV
   const filterString = `SIV_ATTRIBUTE(id)==[${siv1}]|CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {
     label: 'CATEGORY',
-    subtype: 'subcategory-excluded',
+    subtype: 'subcategory-included',
     values: [cat2, cat3],
   };
-  const expectedFilterString = `(SIV_ATTRIBUTE(id)==[${siv1}]|CATEGORY(false)==["${cat2}","${cat3}"])`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(id)==[${siv1}]|CATEGORY(true)==["${cat2}","${cat3}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
@@ -101,8 +101,58 @@ test('can set a category code to the filter definition when it has only SIV attr
 test('can remove a category code from the filter definition', () => {});
 
 // SIV
-test('can set a SIV ID to the filter definition when it does not currently have an SIV ID attribute', () => {});
-test('can set a SIV ID to the filter definition when it currently has an SIV ID attribute', () => {});
+test('can set a SIV ID to the filter definition when it does not currently have an SIV ID attribute - included', () => {
+  const filterString = `CATEGORY(false)==["${cat1}"]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-included',
+    values: [siv2, siv3],
+  };
+  const expectedFilterString = `(CATEGORY(true)==["${cat2}","${cat3}"])`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+test('can set a SIV ID to the filter definition when it currently does not have an SIV ID attribute - excluded', () => {
+  const filterString = `CATEGORY(false)==["${cat2}"]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-excluded',
+    values: [siv2, siv3],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]&(${filterString})`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+
+test('can set a SIV ID to the filter definition when it currently does not have an SIV ID attribute excluded but has SIV ID included', () => {
+  const filterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-excluded',
+    values: [siv2, siv3],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]&(${filterString})`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+test('can set a SIV ID to the filter definition when it currently does not have an SIV ID attribute excluded but has SIV ID included and the excluded value is in included', () => {
+  const filterString = `SIV_ATTRIBUTE(id)==[${siv2}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-excluded',
+    values: [siv2, siv3],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+test('can set a SIV ID to the filter definition when it currently has an SIV ID attribute excluded', () => {
+  const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-excluded',
+    values: [siv2, siv3],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1},${siv2},${siv3}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+test('can set a SIV ID to the filter definition when it currently has an SIV ID attribute excluded', () => {});
 test('can remove a SIV ID to the filter definition when it currently has an SIV ID attribute', () => {});
 
 // Supplier
