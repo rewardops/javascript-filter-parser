@@ -202,21 +202,21 @@ const filterArray = [
         excluded: [123, 432],
       },
     },
-  },
-  [
-    {
-      CATEGORY: {
-        includedWithSubcategories: ['pikachu', 'raichu'],
-      },
-    },
-    {
-      SIV_ATTRIBUTE: {
-        id: {
-          included: [98],
+    array: [
+      {
+        CATEGORY: {
+          includedWithSubcategories: ['pikachu', 'raichu'],
         },
       },
-    },
-  ],
+      {
+        SIV_ATTRIBUTE: {
+          id: {
+            included: [98],
+          },
+        },
+      },
+    ],
+  },
 ];
 ```
 
