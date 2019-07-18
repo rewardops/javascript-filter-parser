@@ -1,3 +1,6 @@
+// Coz flatMap seems to be implemented only in Node11
+const concat = (x, y) => x.concat(y);
+
 export default function convertObjectToString(filter) {
   if (filter.constructor === Array) {
     return filter.reduce((str, f) => {
@@ -10,14 +13,15 @@ export default function convertObjectToString(filter) {
   if (filter.constructor === Object) {
     const filterArray = [];
     if (filter.SIV_ATTRIBUTE) {
-      const { id } = filter.SIV_ATTRIBUTE;
-      const filterString = Object.keys(id)
-        .map(key => {
-          const equalOp = key.includes('include') ? '==' : '!=';
-          const values = id[key].map(value => `${value}`).join(',');
-          return `SIV_ATTRIBUTE(id)${equalOp}[${values}]`;
-        })
+      const filterString = Object.keys(filter.SIV_ATTRIBUTE)
+        .map(type => Object.keys(filter.SIV_ATTRIBUTE[type]).map(subtype => {
+          const equalOp = subtype.includes('include') ? '==' : '!=';
+          const values = filter.SIV_ATTRIBUTE[type][subtype].map(value => `${value}`).join(',');
+          return `SIV_ATTRIBUTE(${type})${equalOp}[${values}]`;
+        }))
+        .reduce(concat, [])
         .join('&');
+
       filterArray.push(filterString);
     }
     if (filter.CATEGORY) {

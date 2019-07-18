@@ -6,6 +6,8 @@ const cat3 = 'Charizard_3';
 const siv1 = 123;
 const siv2 = 214;
 const siv3 = 980;
+const supplier1 = 355;
+const supplier2 = 968;
 
 // SETTING CATEGORY WITH INITIAL VALUE
 test('can set a category code in the filter definition when it already has a category code', () => {
@@ -195,10 +197,10 @@ test('supplierId - when it does not currently have an supplierId', () => {
   const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(true)==["${cat1}"]|SIV_ATTRIBUTE(id)==[${siv2}])`;
   const newFilterObject = {
     label: 'SIV',
-    subtype: 'id-excluded',
-    values: [siv2, siv3],
+    subtype: 'supplier-included',
+    values: [supplier1, supplier2],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]&(CATEGORY(true)==["${cat1}"])`;
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(true)==["${cat1}"]|SIV_ATTRIBUTE(id)==[${siv2}]|SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('supplierId - when it currently has an supplierId', () => {});
