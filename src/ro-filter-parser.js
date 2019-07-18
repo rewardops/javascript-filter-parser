@@ -1,6 +1,7 @@
 import { setCategoryCodes, addCategoryCodes } from './util/category';
 import convertObjectToString from './util/object-to-string';
 import setSivValues from './util/siv';
+import cleanObject from './util/clean-object';
 
 const nearley = require('nearley');
 const grammar = require('../src/compiled-grammar/main');
@@ -62,9 +63,6 @@ export function setFilter(definition, { label, subtype, values }) {
         };
       }
       delete parsedFilter[index].SIV_ATTRIBUTE.id.excluded;
-      if (!parsedFilter[index].SIV_ATTRIBUTE.id.included) {
-        delete parsedFilter[index].SIV_ATTRIBUTE;
-      }
     }
   });
 
@@ -101,7 +99,11 @@ export function setFilter(definition, { label, subtype, values }) {
     default:
       break;
   }
+
   // Remove any empty objects (maybe caused by the SIV extraction)
+  parsedFilter.forEach((filter, index) => {
+    parsedFilter[index] = cleanObject(parsedFilter[index]);
+  });
   parsedFilter = parsedFilter.filter(filter => JSON.stringify(filter) !== '{}');
   if (sivExcludedFilter && parsedFilter.length) {
     sivExcludedFilter.array = parsedFilter;

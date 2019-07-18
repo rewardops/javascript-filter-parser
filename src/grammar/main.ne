@@ -12,7 +12,7 @@ const lexer = moo.compile({
   or: '|',
   boolean: ['true', 'false'],
   label: ['CATEGORY', 'BRAND', 'SIV_ATTRIBUTE'],
-  modifierKeys: ['id'],
+  modifierKeys: ['id','supplier'],
   eqOperator: '==',
   neOperator: '!=',
   number: {match: /[0-9]+/, value: n => parseInt(n, 10) },
