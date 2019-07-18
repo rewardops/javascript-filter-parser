@@ -68,6 +68,11 @@ export function setFilter(definition, { label, subtype, values }) {
     }
   });
 
+  // Assuming filters are currently going to have only a single & at the top level for now
+  if (parsedFilter.length === 1 && parsedFilter[0].array) {
+    parsedFilter = parsedFilter[0].array;
+  }
+
   switch (label) {
     case 'CATEGORY': {
       let updated = false;
