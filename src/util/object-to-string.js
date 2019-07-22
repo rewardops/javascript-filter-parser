@@ -5,20 +5,22 @@ export default function convertObjectToString(filter) {
   if (filter.constructor === Array) {
     return filter.reduce((str, f) => {
       if (str === '') {
-        return `(${convertObjectToString(f)})`;
+        return `${convertObjectToString(f)}`;
       }
-      return `(${str.substring(1, str.length - 1)}|${convertObjectToString(f)})`;
+      return `${str}|${convertObjectToString(f)}`;
     }, '');
   }
   if (filter.constructor === Object) {
     const filterArray = [];
     if (filter.SIV_ATTRIBUTE) {
       const filterString = Object.keys(filter.SIV_ATTRIBUTE)
-        .map(type => Object.keys(filter.SIV_ATTRIBUTE[type]).map(subtype => {
-          const equalOp = subtype.includes('include') ? '==' : '!=';
-          const values = filter.SIV_ATTRIBUTE[type][subtype].map(value => `${value}`).join(',');
-          return `SIV_ATTRIBUTE(${type})${equalOp}[${values}]`;
-        }))
+        .map(type =>
+          Object.keys(filter.SIV_ATTRIBUTE[type]).map(subtype => {
+            const equalOp = subtype.includes('include') ? '==' : '!=';
+            const values = filter.SIV_ATTRIBUTE[type][subtype].map(value => `${value}`).join(',');
+            return `SIV_ATTRIBUTE(${type})${equalOp}[${values}]`;
+          })
+        )
         .reduce(concat, [])
         .join('&');
 
@@ -39,7 +41,7 @@ export default function convertObjectToString(filter) {
     if (filter.array) {
       filterArray.push(convertObjectToString(filter.array));
     }
-    return filterArray.join('&');
+    return filterArray.length > 1 ? `(${filterArray.join('&')})` : filterArray.join('&');
   }
   return '';
 }
