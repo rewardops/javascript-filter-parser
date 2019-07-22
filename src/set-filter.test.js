@@ -27,7 +27,7 @@ test('can set a category code in the filter definition when it already has a cat
     subtype: 'subcategory-included',
     values: [cat2, cat3],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(true)==["${cat2}","${cat3}"]|SIV_ATTRIBUTE(id)==[${siv2}])`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(true)==["${cat2}","${cat3}"])|SIV_ATTRIBUTE(id)==[${siv2}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
@@ -148,7 +148,7 @@ test('SIV ID - when it currently does not have an SIV ID attribute excluded but 
     subtype: 'id-excluded',
     values: [siv2, siv3],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]&(${filterString})`;
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]|(${filterString})`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('SIV ID - when it currently does not have an SIV ID attribute excluded but has SIV ID included and the excluded value is in included', () => {
@@ -188,7 +188,7 @@ test('SIV ID - set Included - when it has ID included, excluded and category cod
     subtype: 'id-included',
     values: [siv2, siv3],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(true)==["${cat1}"]|SIV_ATTRIBUTE(id)==[${siv2},${siv3}])`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(true)==["${cat1}"])|SIV_ATTRIBUTE(id)==[${siv2},${siv3}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('SIV ID - set Included - when it has SIV excluded and Supplier ID', () => {
@@ -198,7 +198,7 @@ test('SIV ID - set Included - when it has SIV excluded and Supplier ID', () => {
     subtype: 'id-included',
     values: [siv2, siv3],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(SIV_ATTRIBUTE(supplier)==[${supplier1}]|SIV_ATTRIBUTE(id)==[${siv2},${siv3}])`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&SIV_ATTRIBUTE(supplier)==[${supplier1}])|SIV_ATTRIBUTE(id)==[${siv2},${siv3}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('SIV ID - set excluded - when it has SIV excluded and Supplier ID', () => {
@@ -220,7 +220,7 @@ test('supplierId - when it does not currently have an supplierId', () => {
     subtype: 'supplier-included',
     values: [supplier1, supplier2],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(true)==["${cat1}"]|SIV_ATTRIBUTE(id)==[${siv2}]|SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}])`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(true)==["${cat1}"]&SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}])|SIV_ATTRIBUTE(id)==[${siv2}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('supplierId - include - when currently only SIV ID excluded exists', () => {
@@ -250,7 +250,7 @@ test('supplierId - include - when currently only category code included exists',
     subtype: 'supplier-included',
     values: [supplier1, supplier2],
   };
-  const expectedFilterString = `(CATEGORY(true)==["${cat1}"]|SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}])`;
+  const expectedFilterString = `(CATEGORY(true)==["${cat1}"]&SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('supplierId - when it currently has an supplierId', () => {});
