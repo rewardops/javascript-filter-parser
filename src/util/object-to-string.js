@@ -3,12 +3,7 @@ const concat = (x, y) => x.concat(y);
 
 export default function convertObjectToString(filter) {
   if (filter.constructor === Array) {
-    return filter.reduce((str, f) => {
-      if (str === '') {
-        return `${convertObjectToString(f)}`;
-      }
-      return `${str}|${convertObjectToString(f)}`;
-    }, '');
+    return filter.map(f => `${convertObjectToString(f)}`).join('|');
   }
   if (filter.constructor === Object) {
     const filterArray = [];
