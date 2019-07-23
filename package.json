@@ -19,7 +19,9 @@
     "jest": "^24.8.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.15.3",
-    "rollup-plugin-commonjs": "^10.0.1"
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0"
   },
   "scripts": {
     "compile": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
