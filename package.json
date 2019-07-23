@@ -18,7 +18,8 @@
     "eslint-plugin-import": "^2.18.0",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3",
-    "rollup": "^1.15.3"
+    "rollup": "^1.15.3",
+    "rollup-plugin-commonjs": "^10.0.1"
   },
   "scripts": {
     "compile": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
