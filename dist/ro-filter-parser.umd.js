@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.RoFilterParser = {}));
-}(this, function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ramda')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'ramda'], factory) :
+  (global = global || self, factory(global.RoFilterParser = {}, global.ramda));
+}(this, function (exports, ramda) { 'use strict';
 
   /* eslint-disable no-param-reassign */
   const categoryTypes = [
@@ -42,64 +42,67 @@
   }
 
   // Coz flatMap seems to be implemented only in Node11
-  const concat = (x, y) => x.concat(y);
 
   function convertObjectToString(filter) {
     if (filter.constructor === Array) {
-      return filter.reduce((str, f) => {
-        if (str === '') {
-          return `(${convertObjectToString(f)})`;
-        }
-        return `(${str.substring(1, str.length - 1)}|${convertObjectToString(f)})`;
-      }, '');
+      return filter.map(f => `${convertObjectToString(f)}`).join('|');
     }
     if (filter.constructor === Object) {
       const filterArray = [];
       if (filter.SIV_ATTRIBUTE) {
-        const filterString = Object.keys(filter.SIV_ATTRIBUTE)
-          .map(type => Object.keys(filter.SIV_ATTRIBUTE[type]).map(subtype => {
-            const equalOp = subtype.includes('include') ? '==' : '!=';
-            const values = filter.SIV_ATTRIBUTE[type][subtype].map(value => `${value}`).join(',');
-            return `SIV_ATTRIBUTE(${type})${equalOp}[${values}]`;
-          }))
-          .reduce(concat, [])
-          .join('&');
+        const filterStringArray = ramda.flatten(
+          Object.keys(filter.SIV_ATTRIBUTE).map(type =>
+            Object.keys(filter.SIV_ATTRIBUTE[type]).map(subtype => {
+              const equalOp = subtype.includes('include') ? '==' : '!=';
+              const values = filter.SIV_ATTRIBUTE[type][subtype].map(value => `${value}`).join(',');
+              return `SIV_ATTRIBUTE(${type})${equalOp}[${values}]`;
+            })
+          )
+        );
 
-        filterArray.push(filterString);
+        filterArray.push(...filterStringArray);
       }
       if (filter.CATEGORY) {
         const { CATEGORY } = filter;
-        const filterString = Object.keys(CATEGORY)
-          .map(key => {
-            const equalOp = key.includes('include') ? '==' : '!=';
-            const subcategoryOp = key.includes('Without') ? 'false' : 'true';
-            const values = CATEGORY[key].map(value => `"${value}"`).join(',');
-            return `CATEGORY(${subcategoryOp})${equalOp}[${values}]`;
-          })
-          .join('&');
-        filterArray.push(filterString);
+        const filterStringArray = Object.keys(CATEGORY).map(key => {
+          const equalOp = key.includes('include') ? '==' : '!=';
+          const subcategoryOp = key.includes('Without') ? 'false' : 'true';
+          const values = CATEGORY[key].map(value => `"${value}"`).join(',');
+          return `CATEGORY(${subcategoryOp})${equalOp}[${values}]`;
+        });
+        filterArray.push(filterStringArray);
       }
       if (filter.array) {
         filterArray.push(convertObjectToString(filter.array));
       }
-      return filterArray.join('&');
+      return filterArray.length > 1 ? `(${filterArray.join('&')})` : filterArray.join('&');
     }
     return '';
   }
 
+  function getObjectIndex(filterArray) {
+    let result;
+    filterArray.forEach((f, i) => {
+      if (JSON.stringify(f) !== '{}') {
+        result = i;
+      }
+    });
+    return result;
+  }
+
   /* eslint-disable no-param-reassign */
-  function setSivValues(parsedFilter, sivExcludedFilter, subtype, values) {
-    let excludedIds = sivExcludedFilter ? sivExcludedFilter.SIV_ATTRIBUTE.id.excluded : [];
-    if (subtype === 'id-excluded') {
-      excludedIds = values;
+  function setSivValues(parsedFilter, sivIncluded, subtype, values) {
+    let includedIds = sivIncluded ? sivIncluded.SIV_ATTRIBUTE.id.included : [];
+    if (subtype === 'id-included') {
+      includedIds = values;
       // Rewrite this so that we don't need param reassign
       parsedFilter.forEach((f, index) => {
         if (
           parsedFilter[index].SIV_ATTRIBUTE
           && parsedFilter[index].SIV_ATTRIBUTE.id
-          && parsedFilter[index].SIV_ATTRIBUTE.id.included
+          && parsedFilter[index].SIV_ATTRIBUTE.id.excluded
         ) {
-          parsedFilter[index].SIV_ATTRIBUTE.id.included = parsedFilter[index].SIV_ATTRIBUTE.id.included.filter(
+          parsedFilter[index].SIV_ATTRIBUTE.id.excluded = parsedFilter[index].SIV_ATTRIBUTE.id.excluded.filter(
             id => !values.includes(id),
           );
         }
@@ -107,37 +110,39 @@
         if (
           parsedFilter[index].SIV_ATTRIBUTE
           && parsedFilter[index].SIV_ATTRIBUTE.id
-          && parsedFilter[index].SIV_ATTRIBUTE.id.included
-          && parsedFilter[index].SIV_ATTRIBUTE.id.included.length === 0
+          && parsedFilter[index].SIV_ATTRIBUTE.id.excluded
+          && parsedFilter[index].SIV_ATTRIBUTE.id.excluded.length === 0
         ) {
           delete parsedFilter[index].SIV_ATTRIBUTE.id;
         }
       });
     }
-    if (subtype === 'id-included') {
+    if (subtype === 'id-excluded') {
       let updated = false;
-      if (sivExcludedFilter) {
-        excludedIds = excludedIds.filter(id => !values.includes(id));
+      if (sivIncluded) {
+        includedIds = includedIds.filter(id => !values.includes(id));
       }
       parsedFilter.forEach((f, index) => {
         if (
           parsedFilter[index].SIV_ATTRIBUTE
           && parsedFilter[index].SIV_ATTRIBUTE.id
-          && parsedFilter[index].SIV_ATTRIBUTE.id.included
+          && parsedFilter[index].SIV_ATTRIBUTE.id.excluded
         ) {
-          parsedFilter[index].SIV_ATTRIBUTE.id.included = values;
+          parsedFilter[index].SIV_ATTRIBUTE.id.excluded = values;
           updated = true;
         }
       });
       if (!updated) {
-        parsedFilter.push({ SIV_ATTRIBUTE: { id: { included: values } } });
+        const index = getObjectIndex(parsedFilter);
+        parsedFilter[index] = ramda.mergeDeepRight(parsedFilter[index], { SIV_ATTRIBUTE: { id: { excluded: values } } });
       }
     }
     if (subtype === 'supplier-included') {
-      parsedFilter.push({ SIV_ATTRIBUTE: { supplier: { included: values } } });
+      const index = getObjectIndex(parsedFilter);
+      parsedFilter[index] = ramda.mergeDeepRight(parsedFilter[index], { SIV_ATTRIBUTE: { supplier: { included: values } } });
     }
-    const updatedSivExcludedFilter = excludedIds.length ? { SIV_ATTRIBUTE: { id: { excluded: excludedIds } } } : null;
-    return { parsedFilter, updatedSivExcludedFilter };
+    const updatedSivIncluded = includedIds.length ? { SIV_ATTRIBUTE: { id: { included: includedIds } } } : null;
+    return { parsedFilter, updatedSivIncluded };
   }
 
   /**
@@ -176,6 +181,39 @@
       }
     });
     return resultObject;
+  }
+
+  function extractSivIncluded(parsedFilter, sivIncluded) {
+    let updatedSivIncluded = sivIncluded;
+    const updatedFilter = parsedFilter.map(filter => {
+      if (filter.SIV_ATTRIBUTE && filter.SIV_ATTRIBUTE.id.included) {
+        if (updatedSivIncluded) {
+          updatedSivIncluded.SIV_ATTRIBUTE.id.included.push(...filter.SIV_ATTRIBUTE.id.included);
+        } else {
+          updatedSivIncluded = {
+            SIV_ATTRIBUTE: {
+              id: {
+                included: filter.SIV_ATTRIBUTE.id.included,
+              },
+            },
+          };
+        }
+        delete filter.SIV_ATTRIBUTE.id.included;
+      }
+      if (filter.array) {
+        ({ updatedFilter: filter.array, updatedSivIncluded } = extractSivIncluded(filter.array, updatedSivIncluded));
+        // This is being done only because of the way the current filter definitions are set up where they are wrongly grouped based on the OR.
+        // Basically all the current definitions have been slightly wrong but because they were never grouped with anything else, it was not noticable.
+        filter.array.forEach(f => {
+          if (f.CATEGORY) {
+            filter.CATEGORY = f.CATEGORY;
+          }
+          delete f.CATEGORY;
+        });
+      }
+      return filter;
+    });
+    return { updatedFilter, updatedSivIncluded };
   }
 
   const nearley = require('nearley');
@@ -220,31 +258,21 @@
   function setFilter(definition, { label, subtype, values }) {
     let parsedFilter = parseFilterString(definition);
 
-    // SIV ATTRIBUTE Excluded is a special case where if the value is excluded that is "ANDed" to all the other rules.
+    // SIV ATTRIBUTE Included is a special case where if the value is included that is "ORed" to all the other rules.
     // So we extract it out
-    let sivExcludedFilter;
+    let sivIncluded;
+    ({ updatedSivIncluded: sivIncluded, updatedFilter: parsedFilter } = extractSivIncluded(parsedFilter, sivIncluded));
+
     parsedFilter.forEach((filter, index) => {
-      // This whole if condition is to achieve the SIV excluded extraction mentioned above
-      if (parsedFilter[index].SIV_ATTRIBUTE && parsedFilter[index].SIV_ATTRIBUTE.id.excluded) {
-        if (sivExcludedFilter) {
-          sivExcludedFilter.SIV_ATTRIBUTE.id.excluded.push(...parsedFilter[index].SIV_ATTRIBUTE.id.excluded);
+      if (parsedFilter[index].array) {
+        const cleanArray = parsedFilter[index].array.map(f => cleanObject(f)).filter(f => JSON.stringify(f) !== '{}');
+        if (cleanArray.length) {
+          parsedFilter[index].array = cleanArray;
         } else {
-          sivExcludedFilter = {
-            SIV_ATTRIBUTE: {
-              id: {
-                excluded: parsedFilter[index].SIV_ATTRIBUTE.id.excluded,
-              },
-            },
-          };
+          delete parsedFilter[index].array;
         }
-        delete parsedFilter[index].SIV_ATTRIBUTE.id.excluded;
       }
     });
-
-    // Assuming filters are currently going to have only a single & at the top level for now
-    if (parsedFilter.length === 1 && parsedFilter[0].array) {
-      parsedFilter = parsedFilter[0].array;
-    }
 
     switch (label) {
       case 'CATEGORY': {
@@ -257,17 +285,12 @@
         });
         if (!updated) {
           const CATEGORY = setCategoryCodes(subtype, values);
-          parsedFilter.push({ CATEGORY });
+          parsedFilter[0].CATEGORY = CATEGORY;
         }
         break;
       }
       case 'SIV': {
-        ({ updatedSivExcludedFilter: sivExcludedFilter, parsedFilter } = setSivValues(
-          parsedFilter,
-          sivExcludedFilter,
-          subtype,
-          values,
-        ));
+        ({ updatedSivIncluded: sivIncluded, parsedFilter } = setSivValues(parsedFilter, sivIncluded, subtype, values));
         break;
       }
 
@@ -280,10 +303,10 @@
       parsedFilter[index] = cleanObject(parsedFilter[index]);
     });
     parsedFilter = parsedFilter.filter(filter => JSON.stringify(filter) !== '{}');
-    if (sivExcludedFilter && parsedFilter.length) {
-      sivExcludedFilter.array = parsedFilter;
+    if (sivIncluded && parsedFilter.length) {
+      parsedFilter.push(sivIncluded);
     }
-    const convertedFilter = sivExcludedFilter || parsedFilter;
+    const convertedFilter = parsedFilter.length ? parsedFilter : sivIncluded;
     return convertObjectToString(convertedFilter);
   }
 
