@@ -2,6 +2,7 @@ import { setCategoryCodes, addCategoryCodes } from './util/category';
 import convertObjectToString from './util/object-to-string';
 import setSivValues from './util/siv';
 import cleanObject from './util/clean-object';
+import extractSivIncluded from './util/extract-siv-included';
 
 const nearley = require('nearley');
 const grammar = require('../src/compiled-grammar/main');
@@ -45,31 +46,21 @@ export function addToFilter(definition, { label, subtype, values }) {
 export function setFilter(definition, { label, subtype, values }) {
   let parsedFilter = parseFilterString(definition);
 
-  // SIV ATTRIBUTE Excluded is a special case where if the value is excluded that is "ANDed" to all the other rules.
+  // SIV ATTRIBUTE Included is a special case where if the value is included that is "ORed" to all the other rules.
   // So we extract it out
-  let sivExcludedFilter;
+  let sivIncluded;
+  ({ updatedSivIncluded: sivIncluded, updatedFilter: parsedFilter } = extractSivIncluded(parsedFilter, sivIncluded));
+
   parsedFilter.forEach((filter, index) => {
-    // This whole if condition is to achieve the SIV excluded extraction mentioned above
-    if (parsedFilter[index].SIV_ATTRIBUTE && parsedFilter[index].SIV_ATTRIBUTE.id.excluded) {
-      if (sivExcludedFilter) {
-        sivExcludedFilter.SIV_ATTRIBUTE.id.excluded.push(...parsedFilter[index].SIV_ATTRIBUTE.id.excluded);
+    if (parsedFilter[index].array) {
+      const cleanArray = parsedFilter[index].array.map(f => cleanObject(f)).filter(f => JSON.stringify(f) !== '{}');
+      if (cleanArray.length) {
+        parsedFilter[index].array = cleanArray;
       } else {
-        sivExcludedFilter = {
-          SIV_ATTRIBUTE: {
-            id: {
-              excluded: parsedFilter[index].SIV_ATTRIBUTE.id.excluded,
-            },
-          },
-        };
+        delete parsedFilter[index].array;
       }
-      delete parsedFilter[index].SIV_ATTRIBUTE.id.excluded;
     }
   });
-
-  // Assuming filters are currently going to have only a single & at the top level for now
-  if (parsedFilter.length === 1 && parsedFilter[0].array) {
-    parsedFilter = parsedFilter[0].array;
-  }
 
   switch (label) {
     case 'CATEGORY': {
@@ -82,17 +73,12 @@ export function setFilter(definition, { label, subtype, values }) {
       });
       if (!updated) {
         const CATEGORY = setCategoryCodes(subtype, values);
-        parsedFilter.push({ CATEGORY });
+        parsedFilter[0].CATEGORY = CATEGORY;
       }
       break;
     }
     case 'SIV': {
-      ({ updatedSivExcludedFilter: sivExcludedFilter, parsedFilter } = setSivValues(
-        parsedFilter,
-        sivExcludedFilter,
-        subtype,
-        values,
-      ));
+      ({ updatedSivIncluded: sivIncluded, parsedFilter } = setSivValues(parsedFilter, sivIncluded, subtype, values));
       break;
     }
 
@@ -105,9 +91,9 @@ export function setFilter(definition, { label, subtype, values }) {
     parsedFilter[index] = cleanObject(parsedFilter[index]);
   });
   parsedFilter = parsedFilter.filter(filter => JSON.stringify(filter) !== '{}');
-  if (sivExcludedFilter && parsedFilter.length) {
-    sivExcludedFilter.array = parsedFilter;
+  if (sivIncluded && parsedFilter.length) {
+    parsedFilter.push(sivIncluded);
   }
-  const convertedFilter = sivExcludedFilter || parsedFilter;
+  const convertedFilter = parsedFilter.length ? parsedFilter : sivIncluded;
   return convertObjectToString(convertedFilter);
 }

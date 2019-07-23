@@ -1,16 +1,19 @@
+import { mergeDeepRight } from 'ramda';
+import getObjectIndex from './get-object-index';
+
 /* eslint-disable no-param-reassign */
-export default function setSivValues(parsedFilter, sivExcludedFilter, subtype, values) {
-  let excludedIds = sivExcludedFilter ? sivExcludedFilter.SIV_ATTRIBUTE.id.excluded : [];
-  if (subtype === 'id-excluded') {
-    excludedIds = values;
+export default function setSivValues(parsedFilter, sivIncluded, subtype, values) {
+  let includedIds = sivIncluded ? sivIncluded.SIV_ATTRIBUTE.id.included : [];
+  if (subtype === 'id-included') {
+    includedIds = values;
     // Rewrite this so that we don't need param reassign
     parsedFilter.forEach((f, index) => {
       if (
         parsedFilter[index].SIV_ATTRIBUTE
         && parsedFilter[index].SIV_ATTRIBUTE.id
-        && parsedFilter[index].SIV_ATTRIBUTE.id.included
+        && parsedFilter[index].SIV_ATTRIBUTE.id.excluded
       ) {
-        parsedFilter[index].SIV_ATTRIBUTE.id.included = parsedFilter[index].SIV_ATTRIBUTE.id.included.filter(
+        parsedFilter[index].SIV_ATTRIBUTE.id.excluded = parsedFilter[index].SIV_ATTRIBUTE.id.excluded.filter(
           id => !values.includes(id),
         );
       }
@@ -18,35 +21,37 @@ export default function setSivValues(parsedFilter, sivExcludedFilter, subtype, v
       if (
         parsedFilter[index].SIV_ATTRIBUTE
         && parsedFilter[index].SIV_ATTRIBUTE.id
-        && parsedFilter[index].SIV_ATTRIBUTE.id.included
-        && parsedFilter[index].SIV_ATTRIBUTE.id.included.length === 0
+        && parsedFilter[index].SIV_ATTRIBUTE.id.excluded
+        && parsedFilter[index].SIV_ATTRIBUTE.id.excluded.length === 0
       ) {
         delete parsedFilter[index].SIV_ATTRIBUTE.id;
       }
     });
   }
-  if (subtype === 'id-included') {
+  if (subtype === 'id-excluded') {
     let updated = false;
-    if (sivExcludedFilter) {
-      excludedIds = excludedIds.filter(id => !values.includes(id));
+    if (sivIncluded) {
+      includedIds = includedIds.filter(id => !values.includes(id));
     }
     parsedFilter.forEach((f, index) => {
       if (
         parsedFilter[index].SIV_ATTRIBUTE
         && parsedFilter[index].SIV_ATTRIBUTE.id
-        && parsedFilter[index].SIV_ATTRIBUTE.id.included
+        && parsedFilter[index].SIV_ATTRIBUTE.id.excluded
       ) {
-        parsedFilter[index].SIV_ATTRIBUTE.id.included = values;
+        parsedFilter[index].SIV_ATTRIBUTE.id.excluded = values;
         updated = true;
       }
     });
     if (!updated) {
-      parsedFilter.push({ SIV_ATTRIBUTE: { id: { included: values } } });
+      const index = getObjectIndex(parsedFilter);
+      parsedFilter[index] = mergeDeepRight(parsedFilter[index], { SIV_ATTRIBUTE: { id: { excluded: values } } });
     }
   }
   if (subtype === 'supplier-included') {
-    parsedFilter.push({ SIV_ATTRIBUTE: { supplier: { included: values } } });
+    const index = getObjectIndex(parsedFilter);
+    parsedFilter[index] = mergeDeepRight(parsedFilter[index], { SIV_ATTRIBUTE: { supplier: { included: values } } });
   }
-  const updatedSivExcludedFilter = excludedIds.length ? { SIV_ATTRIBUTE: { id: { excluded: excludedIds } } } : null;
-  return { parsedFilter, updatedSivExcludedFilter };
+  const updatedSivIncluded = includedIds.length ? { SIV_ATTRIBUTE: { id: { included: includedIds } } } : null;
+  return { parsedFilter, updatedSivIncluded };
 }
