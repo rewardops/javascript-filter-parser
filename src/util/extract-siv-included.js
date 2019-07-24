@@ -1,7 +1,7 @@
 export default function extractSivIncluded(parsedFilter, sivIncluded) {
   let updatedSivIncluded = sivIncluded;
   const updatedFilter = parsedFilter.map(filter => {
-    if (filter.SIV_ATTRIBUTE && filter.SIV_ATTRIBUTE.id.included) {
+    if (filter.SIV_ATTRIBUTE && filter.SIV_ATTRIBUTE.id && filter.SIV_ATTRIBUTE.id.included) {
       if (updatedSivIncluded) {
         updatedSivIncluded.SIV_ATTRIBUTE.id.included.push(...filter.SIV_ATTRIBUTE.id.included);
       } else {

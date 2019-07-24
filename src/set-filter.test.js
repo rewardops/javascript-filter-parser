@@ -74,6 +74,16 @@ test('can set a category code - when it excludes SIV ids', () => {
   const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(false)==["${cat2}","${cat3}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
+test('can set a category code - when it currently has supplier and category', () => {
+  const filterString = `(SIV_ATTRIBUTE(supplier)==[${siv1}]&CATEGORY(true)==["${cat2}"])`;
+  const newFilterObject = {
+    label: 'CATEGORY',
+    subtype: 'subcategory-excluded',
+    values: [cat2, cat3],
+  };
+  const expectedFilterString = `(SIV_ATTRIBUTE(supplier)==[${siv1}]&CATEGORY(false)==["${cat2}","${cat3}"])`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
 
 // SETTING CATEGORY WHEN NOT INITIALLY PRESENT
 test('can set a category code - when it has only SIV attributes (SIV Included)', () => {
