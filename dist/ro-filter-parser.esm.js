@@ -608,7 +608,7 @@ function cleanObject(obj) {
 function extractSivIncluded(parsedFilter, sivIncluded) {
   var updatedSivIncluded = sivIncluded;
   var updatedFilter = parsedFilter.map(function (filter) {
-    if (filter.SIV_ATTRIBUTE && filter.SIV_ATTRIBUTE.id.included) {
+    if (filter.SIV_ATTRIBUTE && filter.SIV_ATTRIBUTE.id && filter.SIV_ATTRIBUTE.id.included) {
       if (updatedSivIncluded) {
         var _updatedSivIncluded$S;
 
