@@ -6,7 +6,7 @@ const pkg = require('./package.json');
 
 const libraryName = 'ro-filter-parser';
 export default {
-  input: `src/${libraryName}.js`,
+  input: `lib/${libraryName}.js`,
   output: [
     {
       file: pkg.main,

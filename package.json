@@ -24,7 +24,7 @@
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "scripts": {
-    "compile": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
+    "compile": "nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js",
     "pretest": "npm run compile",
     "test": "NODE_ENV=test jest",
     "prebuild": "rimraf dist; npm run compile",

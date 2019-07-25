@@ -1,4 +1,4 @@
-import { addToFilter } from './ro-filter-parser';
+import { addToFilter } from '../lib/ro-filter-parser';
 
 const cat1 = 'Pikachu_1';
 const cat2 = 'Raichu_2';

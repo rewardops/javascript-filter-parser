@@ -8,14 +8,14 @@ This project uses the parser generator by [ Nearley.js ](https://nearley.js.org/
 npm install -g nearley
 ```
 
-There are a few example grammar files provided in the folder `src/grammar/examples`. Going through these might give the reader an understanding of the grammar syntax and the grammar examples also include instructions on how to test them.
+There are a few example grammar files provided in the folder `lib/grammar/examples`. Going through these might give the reader an understanding of the grammar syntax and the grammar examples also include instructions on how to test them.
 
 ### Compiling the Grammar to generate the parser
 
-The main file containing the grammar rules are stored in `src/grammar/main.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
+The main file containing the grammar rules are stored in `lib/grammar/main.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
 
 ```js
-nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js
+nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js
 ```
 
 This will generate the parser file `main.js` which is used by this library.
@@ -25,7 +25,7 @@ This will generate the parser file `main.js` which is used by this library.
 If you want to test the generated parser file against a particular output in the terminal without running the tests through jest, you can run:
 
 ```js
-nearley-test src/compiled-grammar/main.js --input 'CATEGORY(true)=="abc"'
+nearley-test lib/compiled-grammar/main.js --input 'CATEGORY(true)=="abc"'
 ```
 
 ## Filter Specs
