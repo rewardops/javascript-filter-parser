@@ -631,7 +631,7 @@ function extractSivIncluded(parsedFilter, sivIncluded) {
 
       filter.array = _extractSivIncluded.updatedFilter;
       updatedSivIncluded = _extractSivIncluded.updatedSivIncluded;
-      // This is being done only because of the way the current filter definitions are set up where they are wrongly grouped based on the OR.
+      // This is being done because of the way the current filter definitions are set up where they are wrongly grouped based on the OR.
       // Basically all the current definitions have been slightly wrong but because they were never grouped with anything else, it was not noticable.
       filter.array.forEach(function (f) {
         if (f.CATEGORY) {
@@ -652,7 +652,7 @@ function extractSivIncluded(parsedFilter, sivIncluded) {
 
 var nearley = require('nearley');
 
-var grammar = require('../src/compiled-grammar/main');
+var grammar = require('./compiled-grammar/main');
 /**
  * The main function of the library. Parses the filter string to return a JSON object
  *
