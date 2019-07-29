@@ -312,7 +312,7 @@ test('with a SIV supplier AND SIV ID excluded', () => {
   expect(parseFilterString(filterString)).toStrictEqual(expectedOutput);
 });
 
-test.only('with a SIV supplier AND SIV ID excluded AND CATEGORY OR SIV ID included', () => {
+test('with a SIV supplier AND SIV ID excluded AND CATEGORY OR SIV ID included', () => {
   const filterString = `(SIV_ATTRIBUTE(supplier)==[${sup1},${sup2}]&SIV_ATTRIBUTE(id)!=[${siv1},${siv3}]&CATEGORY(true)==["${cat1}"])|SIV_ATTRIBUTE(id)==[${siv2}]`;
   const expectedOutput = [
     {
@@ -320,7 +320,9 @@ test.only('with a SIV supplier AND SIV ID excluded AND CATEGORY OR SIV ID includ
         supplier: { included: [sup1, sup2] },
         id: { excluded: [siv1, siv3] },
       },
-      CATEGORY: 123,
+      CATEGORY: {
+        includedWithSubcategories: [cat1],
+      },
     },
     { SIV_ATTRIBUTE: { id: { included: [siv2] } } },
   ];
