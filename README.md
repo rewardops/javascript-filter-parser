@@ -4,7 +4,7 @@ Table of Contents
    * [Working on the parser](#working-on-the-parser)
       * [Compiling the Grammar to generate the parser](#compiling-the-grammar-to-generate-the-parser)
       * [Testing in the terminal](#testing-in-the-terminal)
-   * [Library Specs](#library-specs)
+   * [Library Specification](#library-specification)
    * [parseFilterString(filterString) ⇒ object](#parsefilterstringfilterstring--object)
       * [Category Filter With Subcategories](#category-filter-with-subcategories)
          * [Adding categories](#adding-categories)
@@ -52,9 +52,9 @@ If you want to test the generated parser file against a particular output in the
 nearley-test lib/compiled-grammar/main.js --input 'CATEGORY(true)=="abc"'
 ```
 
-# Library Specs
+# Library Specification
 
-There are two main functions returned from the library with the following Signatures:
+There are two main functions returned from the library with the following signatures:
 
 <dl>
 <dt><a href="#parseFilterString">parseFilterString(filterString)</a> ⇒ <code>object</code></dt>
