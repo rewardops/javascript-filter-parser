@@ -1,3 +1,29 @@
+Table of Contents
+=================
+
+   * [Working on the parser](#working-on-the-parser)
+         * [Compiling the Grammar to generate the parser](#compiling-the-grammar-to-generate-the-parser)
+         * [Testing in the terminal](#testing-in-the-terminal)
+   * [Library Specs](#library-specs)
+   * [parseFilterString(filterString) ⇒ object](#parsefilterstringfilterstring--object)
+      * [Category Filter With Subcategories](#category-filter-with-subcategories)
+         * [Adding categories](#adding-categories)
+         * [Removing categories](#removing-categories)
+      * [Category Filter Without Subcategories](#category-filter-without-subcategories)
+      * [Other Example Filter Strings](#other-example-filter-strings)
+         * [Items belonging to category codes or certain item IDs](#items-belonging-to-category-codes-or-certain-item-ids)
+         * [Items belonging to category codes but not including certain item IDs](#items-belonging-to-category-codes-but-not-including-certain-item-ids)
+         * [Items belonging to category codes or item IDs but not including certain item IDs](#items-belonging-to-category-codes-or-item-ids-but-not-including-certain-item-ids)
+   * [setFilter(definition, { label,subtype,values }) ⇒ string](#setfilterdefinition--labelsubtypevalues---string)
+      * [CATEGORY](#category)
+         * [subcategory-included](#subcategory-included)
+         * [subcategory-excluded](#subcategory-excluded)
+      * [SIV_ATTRIBUTE](#siv_attribute)
+         * [id-included (<em>special case</em>)](#id-included-special-case)
+         * [id-excluded](#id-excluded)
+         * [supplier-included](#supplier-included)
+   * [Testing](#testing)
+
 # Working on the parser
 
 This project uses the parser generator by [ Nearley.js ](https://nearley.js.org/). To work on the grammar and to modify the rules, you will need to have Nearley installed on your machine. To achieve that run:
