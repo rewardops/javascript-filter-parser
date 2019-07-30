@@ -11,6 +11,16 @@ const supplier2 = 968;
 const supplier3 = 1;
 
 // SETTING CATEGORY WITH INITIAL VALUE
+test('category code - when filter is empty', () => {
+  const filterString = '';
+  const newFilterObject = {
+    label: 'CATEGORY',
+    subtype: 'subcategory-included',
+    values: [cat2, cat3],
+  };
+  const expectedFilterString = `CATEGORY(true)==["${cat2}","${cat3}"]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
 test('can set a category code in the filter definition when it already has a category code', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {

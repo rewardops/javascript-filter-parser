@@ -261,15 +261,15 @@ const filterArray = [
 
 # setFilter(definition, { label,subtype,values }) ⇒ <code>string</code>
 Takes a filter string and a json object and updates filter string with the JSON object.
-Existing values for the quantity being set are blown away
+Existing values for the quantity being set are blown away.
 
 **Kind**: global function
-**Returns**: <code>string</code> - The filter difinition with the values added to the initial definition
+**Returns**: <code>string</code> - The filter difinition with the values added to the initial definition.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | definition | <code>string</code> | The filter definition to be modified |
-| {} | <code>object</code> | Object with 3 keys: label, subtype, values |
+| { label, subtype, values } | <code>object</code> | An object which specifies what to set on the filter and the values to set |
 
 **Example**
 ```js
@@ -278,7 +278,26 @@ setFilter("SIV_ATTRIBUTE(id)=[123]", { label: 'CATEGORY', subtype: 'subcategory-
 -> `CATEGORY(true)==["cat1"]|SIV_ATTRIBUTE(id)==[123]`
 ```
 
-## Including Items to the Filter String
+The currently supported labels and the valid subtypes are in this chart.
+
+| Label | Valid Subtypes |
+| --- | --- |
+| `CATEGORY` | `subcategory-included`, `subcategory-excluded`
+| `SIV_ATTRIBUTE` | `id-included`, `id-excluded`, `supplier-included`
+
+The following section explains each of these label subtype combinations in further detail with examples.
+
+## CATEGORY
+### `subcategory-included`
+
+Used to update or set category codes which are to be included in the filter string
+
+### `subcategory-excluded`
+
+## SIV_ATTRIBUTE
+### `id-included`
+### `id-excluded`
+### `supplier-included`
 
 
 
