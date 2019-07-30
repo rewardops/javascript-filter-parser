@@ -10,7 +10,7 @@ There are a few example grammar files provided in the folder `lib/grammar/exampl
 
 ### Compiling the Grammar to generate the parser
 
-The main file containing the grammar rules are stored in `lib/grammar/main.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
+The main file containing the grammar rules is stored in `lib/grammar/main.ne`. Whenever the file is updated, you need to compile it to generate the parser js file. To do this run:
 
 ```js
 nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js
