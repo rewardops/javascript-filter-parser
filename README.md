@@ -55,28 +55,9 @@ Parses the filter string to return a JSON object
 
 **Example**
 ```js
-parseFilterString('CATEGORY(true)!="abc"')
+parseFilterString('CATEGORY(true)==["abc","cde"]&CATEGORY(false)==["xyz"]&CATEGORY(true)!=["123"]&SIV_ATTRIBUTE(id)==[12,23]&SIV_ATTRIBUTE(id)!=[65,34]')
 
 -> returns: [
-      {
-        CATEGORY: {
-          excludedWithSubCategories: ["abc"]
-        }
-      }
-    ]
-```
-
-The primary function exported by this library is the `parseFilterString` function. This function will consume a filter string of the form:
-
-```js
-const filterString =
-  'CATEGORY(true)==["abc","cde"]&CATEGORY(false)==["xyz"]&CATEGORY(true)!=["123"]&SIV_ATTRIBUTE(id)==[12,23]&SIV_ATTRIBUTE(id)!=[65,34]';
-```
-
-So you should be able to call `parseFilterString(filterString)` and it should return a JSON object of the form:
-
-```js
-const filterArray = [
   {
     CATEGORY: {
       includedWithSubcategories: ['abc', 'cde'],
@@ -93,9 +74,10 @@ const filterArray = [
 ];
 ```
 
+
 If we break it down to smaller chunks, we get:
 
-## Filter With Subcategories Included
+## Category Filter With Subcategories
 
 These are definitions where including a parent category automatically includes all its subcategories to the filter. In the filter string they are represented by the boolean in the parenthesis immediately after the keyword `CATEGORY`. For example in the category string `CATEGORY(true)==['CAT_SYS_123']`, the `true` indicates that all the subcategories are included.
 
@@ -145,7 +127,7 @@ const filterArray = [
 
 The key here is called `excluded` as opposed to `included` in the previous example.
 
-## Filter With Subcategories Excluded
+## Category Filter Without Subcategories
 
 A category filter definition where adding or excluding a category only applies to items marked with that particular category and items marked with categories which are subcategories to the category mentioned in the definition are unaffected by this filter rule. An example of a filter string of this type would be `CATEGORY(false)==['CAT_123']` and here the boolean `false` next to the category indicates that the subcategories are not included in the definition. These have the same 2 types as the definitions where the subcategories are included:
 
@@ -290,16 +272,80 @@ The following section explains each of these label subtype combinations in furth
 ## CATEGORY
 ### `subcategory-included`
 
-Used to update or set category codes which are to be included in the filter string
+Used to update or set category codes which are to be included in the filter string _**including** their subcategories_. Say the filter initially includes all items with the category code `electronics` and its subcategories. You want to change the filter to include all items which belong to category codes `electricals` and `home-appliances` and their subcategories.
+
+```js
+const initialDefinition = 'CATEGORY(true)==["electronics"]';
+
+setFilter(initialDefintion, { label: 'CATEGORY', subtype: 'subcategory-included', values: ["electricals", "home-appliances"]});
+
+-> 'CATEGORY(true)==["electricals", "home-appliances"]'
+```
+
+The initial value can also be a filter string not containing category. Say the initial filter was all items belonging to the supplier `Apple`. And we wanted to add the same 2 category codes to this filter string.
+
+```js
+const initialDefinition = `SIV_ATTRIBUTE(supplier)==["Apple"]`;
+
+setFilter(initialDefintion, { label: 'CATEGORY', subtype: 'subcategory-included', values: ["electricals", "home-appliances"]});
+
+-> `SIV_ATTRIBUTE(supplier)==["Apple"]&CATEGORY(true)==["electricals", "home-appliances"]`
+```
+
 
 ### `subcategory-excluded`
 
+Used to update or set category codes which are to be included in the filter string _**excluding** their subcategories_. Say the filter initially includes all items with the category code `electronics` and its subcategories. You want to change the filter to include all items which belong to category codes `electronics2` and `home-appliances` but not their subcategories.
+
+```js
+const initialDefinition = 'CATEGORY(true)==["electronics"]';
+
+setFilter(initialDefintion, { label: 'CATEGORY', subtype: 'subcategory-excluded', values: ["electronics2", "home-appliances"]});
+
+-> 'CATEGORY(false)==["electronics2", "home-appliances"]'
+```
 ## SIV_ATTRIBUTE
-### `id-included`
+### `id-included` (_special case_)
+
+We use this to create a filter which includes all the SIV IDs provided. This is a special case because the other filter strings are all inclusive. For example, your filter may try to get all items belonging to a particular category, say Electronics **AND** is supplied by a particular supplier, say Apple. But in the case of SIV IDs, it is the other conditions **OR** all items with these IDs. It is not an **AND** relationship.
+
+```js
+const initialDef = 'CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]'
+
+setFilter(initialDef, { label: 'SIV_ATTRIBUTE', subtype: 'id-included', values: [123]})
+
+->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"])|SIV_ATTRIBUTE(id)==[123]'
+```
+
+Note: The resulting filter is joined with an **"|"** which denotes that its an **OR** condition.
+
 ### `id-excluded`
+
+If you want to select all items belonging to a particular filter **except** for a few IDs, thats when you use this rule. This will specify a set of SIV ID values to exclude from the filter.
+
+
+```js
+const initialDef = 'CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]'
+
+setFilter(initialDef, { label: 'SIV_ATTRIBUTE', subtype: 'id-excluded', values: [123]})
+
+->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]&SIV_ATTRIBUTE(id)!=[123])'
+```
+
+Note the difference from the previous filter string. The IDs are denoted with a **"!="** sign and they are joined with an **&** to denote that this rule works with the existing rules.
+
 ### `supplier-included`
 
+If you have a particular filter but if you want to restrict the filter result only to a list of suppliers, you will use this subtype. For example, say the filter currently returns all items belonging to the category electronics, but you want to just look at the items under electronics provided by the amazing supplier rewardos and say the supplier ID of rewardos was 1.
 
+
+```js
+const initialDef = 'CATEGORY(true)==["electronics"]'
+
+setFilter(initialDef, { label: 'SIV_ATTRIBUTE', subtype: 'supplier-included', values: [1]})
+
+->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==[1])'
+```
 
 # Testing
 
