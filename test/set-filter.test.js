@@ -8,6 +8,7 @@ const siv2 = 214;
 const siv3 = 980;
 const supplier1 = 355;
 const supplier2 = 968;
+const supplier3 = 1;
 
 // SETTING CATEGORY WITH INITIAL VALUE
 test('can set a category code in the filter definition when it already has a category code', () => {
@@ -263,4 +264,35 @@ test('supplierId - include - when currently only category code included exists',
   const expectedFilterString = `(SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}]&CATEGORY(true)==["${cat1}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
-test('supplierId - when it currently has an supplierId', () => {});
+test('supplierId - when it currently has an supplierId', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'supplier-included',
+    values: [supplier1, supplier2],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+
+test('supplierId - when it currently has a supplierId and a SIV id excluded', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]&SIV_ATTRIBUTE(id)!=[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'supplier-included',
+    values: [supplier1, supplier2],
+  };
+  const expectedFilterString = `(SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}]&SIV_ATTRIBUTE(id)!=[${siv1}])`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+
+test('supplierId - when it currently has a supplierId and a SIV id included', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'supplier-included',
+    values: [supplier1, supplier2],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
