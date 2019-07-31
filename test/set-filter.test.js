@@ -21,7 +21,7 @@ test('category code - when filter is empty', () => {
   const expectedFilterString = `CATEGORY(true)==["${cat2}","${cat3}"]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
-test('can set a category code in the filter definition when it already has a category code', () => {
+test('category code in the filter definition when it already has a category code', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -31,7 +31,7 @@ test('can set a category code in the filter definition when it already has a cat
   const expectedFilterString = `CATEGORY(true)==["${cat2}","${cat3}"]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
-test('can set a category code in the filter definition when it already has a category code, SIV included and SIV excluded', () => {
+test('category code in the filter definition when it already has a category code, SIV included and SIV excluded', () => {
   const filterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(true)==["${cat1}"])|SIV_ATTRIBUTE(id)==[${siv2}]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -42,7 +42,7 @@ test('can set a category code in the filter definition when it already has a cat
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can set a category code - when the included type is off the same type', () => {
+test('category code - when the included type is off the same type', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -53,7 +53,7 @@ test('can set a category code - when the included type is off the same type', ()
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can set a category code - when it also includes SIV ids', () => {
+test('category code - when it also includes SIV ids', () => {
   const filterString = `CATEGORY(false)==["${cat1}"]|SIV_ATTRIBUTE(id)==[${siv1}]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -64,7 +64,7 @@ test('can set a category code - when it also includes SIV ids', () => {
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can set a category code - when it also includes SIV ids (changed order)', () => {
+test('category code - when it also includes SIV ids (changed order)', () => {
   const filterString = `SIV_ATTRIBUTE(id)==[${siv1}]|CATEGORY(false)==["${cat1}"]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -75,7 +75,7 @@ test('can set a category code - when it also includes SIV ids (changed order)', 
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can set a category code - when it excludes SIV ids', () => {
+test('category code - when it excludes SIV ids', () => {
   const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&(CATEGORY(false)==["${cat1}"])`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -85,7 +85,7 @@ test('can set a category code - when it excludes SIV ids', () => {
   const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv1}]&CATEGORY(false)==["${cat2}","${cat3}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
-test('can set a category code - when it currently has supplier and category', () => {
+test('category code - when it currently has supplier and category', () => {
   const filterString = `(SIV_ATTRIBUTE(supplier)==[${siv1}]&CATEGORY(true)==["${cat2}"])`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -97,7 +97,7 @@ test('can set a category code - when it currently has supplier and category', ()
 });
 
 // SETTING CATEGORY WHEN NOT INITIALLY PRESENT
-test('can set a category code - when it has only SIV attributes (SIV Included)', () => {
+test('category code - when it has only SIV attributes (SIV Included)', () => {
   const filterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -108,7 +108,7 @@ test('can set a category code - when it has only SIV attributes (SIV Included)',
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can set a category code - when it has only SIV attributes (SIV Excluded)', () => {
+test('category code - when it has only SIV attributes (SIV Excluded)', () => {
   const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}]`;
   const newFilterObject = {
     label: 'CATEGORY',
@@ -119,7 +119,7 @@ test('can set a category code - when it has only SIV attributes (SIV Excluded)',
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can set a category code - when it has only SIV attributes (SIV Excluded and Included)', () => {
+test('category code - when it has only SIV attributes (SIV Excluded and Included)', () => {
   const filterString = `SIV_ATTRIBUTE(id)!=[${siv1}]&SIV_ATTRIBUTE(id)==[${siv2}]`;
   const newFilterObject = {
     label: 'CATEGORY',
