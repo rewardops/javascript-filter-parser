@@ -1053,7 +1053,7 @@
 
   var nearley = require('nearley');
 
-  var grammar = require('./compiled-grammar/main');
+  var grammar = require('../lib/compiled-grammar/main');
   /**
    * Parses the filter string to return a JSON object
    *
