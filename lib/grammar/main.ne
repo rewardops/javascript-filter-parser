@@ -80,26 +80,28 @@ expression -> %label modifier equalityOperation param {%
                   const label = data[0].value;
                   const inclusionKey = equality === '==' ? 'included' : 'excluded';
                   let result = {};
-                  if (label === 'CATEGORY') {
-                    result[label] = {};
+                  const CATEGORY_LABEL = 'CATEGORY';
+                  const SIV_ATTRIBUTE_LABEL = 'SIV_ATTRIBUTE';
+                  if (label === CATEGORY_LABEL) {
+                    result[CATEGORY_LABEL] = {};
                     if (modifier) {
                       if (inclusionKey === 'included') {
-                        result[label].includedWithSubcategories = data[3][0];
+                        result[CATEGORY_LABEL].includedWithSubcategories = data[3][0];
                       }
                       if (inclusionKey === 'excluded') {
-                        result[label].excludedWithSubcategories = data[3][0];
+                        result[CATEGORY_LABEL].excludedWithSubcategories = data[3][0];
                       }
                     } else {
                       if (inclusionKey === 'included') {
-                        result[label].includedWithoutSubcategories = data[3][0];
+                        result[CATEGORY_LABEL].includedWithoutSubcategories = data[3][0];
                       }
                       if (inclusionKey === 'excluded') {
-                        result[label].excludedWithoutSubcategories = data[3][0];
+                        result[CATEGORY_LABEL].excludedWithoutSubcategories = data[3][0];
                       }
                     }
                   }
-                  if (label === 'SIV_ATTRIBUTE') {
-                    result[label] = {
+                  if (label === SIV_ATTRIBUTE_LABEL) {
+                    result[SIV_ATTRIBUTE_LABEL] = {
                       [modifier]: {
                         [inclusionKey]: data[3][0]
                       }
