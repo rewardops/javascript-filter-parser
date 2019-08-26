@@ -1,6 +1,6 @@
 import cleanObject from '../lib/util/clean-object';
 
-test('works as expected', () => {
+test('removes the empty entries correctly', () => {
   const inputObject = {
     SIV: {
       id: {},
@@ -16,7 +16,7 @@ test('works as expected', () => {
   expect(cleanObject(inputObject)).toStrictEqual(expectedOutput);
 });
 
-test('if all the entries are empty', () => {
+test('works even if all the entries are empty', () => {
   const inputObject = {
     SIV: {
       id: {},
