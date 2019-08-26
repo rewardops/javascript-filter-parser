@@ -2,10 +2,7 @@ import { addToFilter } from '../lib/ro-filter-parser';
 
 const cat1 = 'Pikachu_1';
 const cat2 = 'Raichu_2';
-// const cat3 = 'Charizard_3';
 const siv1 = 123;
-// const siv2 = 214;
-// const siv3 = 980;
 
 // Category
 test('can add a category code to the filter definition', () => {
@@ -41,15 +38,15 @@ test('can add a category code to the filter definition when it also includes SIV
   expect(addToFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
-test('can remove a category code from the filter definition', () => {});
-test('can add a category code to the filter definition when it has only SIV attributes', () => {});
+test.todo('can remove a category code from the filter definition');
+test.todo('can add a category code to the filter definition when it has only SIV attributes');
 
 // SIV
-test('can add a SIV ID to the filter definition when it does not currently have an SIV ID attribute', () => {});
-test('can add a SIV ID to the filter definition when it currently has an SIV ID attribute', () => {});
-test('can remove a SIV ID to the filter definition when it currently has an SIV ID attribute', () => {});
+test.todo('can add a SIV ID to the filter definition when it does not currently have an SIV ID attribute');
+test.todo('can add a SIV ID to the filter definition when it currently has an SIV ID attribute');
+test.todo('can remove a SIV ID to the filter definition when it currently has an SIV ID attribute');
 
 // Supplier
-test('can add a supplierId to the filter definition when it does not currently have an supplierId attribute', () => {});
-test('can add a supplierId to the filter definition when it currently has an supplierId attribute', () => {});
-test('can remove a supplierId to the filter definition when it currently has an supplierId attribute', () => {});
+test.todo('can add a supplierId to the filter definition when it does not currently have an supplierId attribute');
+test.todo('can add a supplierId to the filter definition when it currently has an supplierId attribute');
+test.todo('can remove a supplierId to the filter definition when it currently has an supplierId attribute');
