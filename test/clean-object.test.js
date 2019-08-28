@@ -1,4 +1,4 @@
-import cleanObject from '../lib/util/clean-object';
+import deleteEmptyKeys from '../lib/util/clean-object';
 
 test('removes the empty entries correctly', () => {
   const inputObject = {
@@ -13,7 +13,7 @@ test('removes the empty entries correctly', () => {
     },
   };
   const expectedOutput = { SIV: { incl: [1] } };
-  expect(cleanObject(inputObject)).toStrictEqual(expectedOutput);
+  expect(deleteEmptyKeys(inputObject)).toStrictEqual(expectedOutput);
 });
 
 test('works even if all the entries are empty', () => {
@@ -29,5 +29,5 @@ test('works even if all the entries are empty', () => {
     },
   };
   const expectedOutput = {};
-  expect(cleanObject(inputObject)).toStrictEqual(expectedOutput);
+  expect(deleteEmptyKeys(inputObject)).toStrictEqual(expectedOutput);
 });
