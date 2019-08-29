@@ -338,7 +338,7 @@ We use this to create a filter which includes all the SIV IDs provided. This is 
 ```js
 const initialDef = 'CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]'
 
-setFilter(initialDef, { label: 'SIV_ATTRIBUTE', subtype: 'id-included', values: [123]})
+setFilter(initialDef, { label: 'SIV', subtype: 'id-included', values: [123]})
 
 ->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"])|SIV_ATTRIBUTE(id)==[123]'
 ```
@@ -353,7 +353,7 @@ If you want to select all items belonging to a particular filter **except** for 
 ```js
 const initialDef = 'CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]'
 
-setFilter(initialDef, { label: 'SIV_ATTRIBUTE', subtype: 'id-excluded', values: [123]})
+setFilter(initialDef, { label: 'SIV', subtype: 'id-excluded', values: [123]})
 
 ->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]&SIV_ATTRIBUTE(id)!=[123])'
 ```
@@ -368,7 +368,7 @@ If you have a particular filter but if you want to restrict the filter result on
 ```js
 const initialDef = 'CATEGORY(true)==["electronics"]'
 
-setFilter(initialDef, { label: 'SIV_ATTRIBUTE', subtype: 'supplier-included', values: [1]})
+setFilter(initialDef, { label: 'SIV', subtype: 'supplier-included', values: [1]})
 
 ->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==[1])'
 ```
