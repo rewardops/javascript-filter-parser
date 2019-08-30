@@ -1,4 +1,4 @@
-import deleteEmptyKeys from '../lib/util/clean-object';
+import deleteEmptyKeys from '../lib/util/delete-empty-keys';
 
 test('removes the empty entries correctly', () => {
   const inputObject = {
