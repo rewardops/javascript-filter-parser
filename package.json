@@ -6,17 +6,26 @@
   "module": "dist/ro-filter-parser.esm.js",
   "private": true,
   "dependencies": {
+    "eslint-config-airbnb": "^17.1.1",
     "moo": "^0.5.0",
-    "nearley": "^2.16.0"
+    "nearley": "^2.16.0",
+    "ramda": "^0.26.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.4.5",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.18.0",
     "jest": "^24.8.0",
+    "jsdoc-to-markdown": "^5.0.0",
     "rimraf": "^2.6.3",
-    "rollup": "^1.15.3"
+    "rollup": "^1.15.3",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0"
   },
   "scripts": {
-    "compile": "nearleyc src/grammar/main.ne -o src/compiled-grammar/main.js",
+    "compile": "nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js",
     "pretest": "npm run compile",
     "test": "NODE_ENV=test jest",
     "prebuild": "rimraf dist; npm run compile",

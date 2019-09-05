@@ -1,8 +1,8 @@
 # Simple example grammar showing how an expression is constructed using smaller units.
 # This only parses to string to check that its valid. It does not have a preprocessor to manipulate the expression
 
-# Compile with: `nearleyc src/grammar/examples/intermediate-plusminus.ne -o src/compiled-grammar/examples/intermediate-plusminus.js`
-# Execute with: `nearley-test src/compiled-grammar/examples/intermediate-plusminus.js --input "2+3-234234"`
+# Compile with: `nearleyc lib/grammar/examples/intermediate-plusminus.ne -o lib/compiled-grammar/examples/intermediate-plusminus.js`
+# Execute with: `nearley-test lib/compiled-grammar/examples/intermediate-plusminus.js --input "2+3-234234"`
 
 # The final expression made of MathSymbols(MS) and Numbers(N)
 expression ->
