@@ -375,13 +375,17 @@ setFilter(initialDef, { label: 'SIV', subtype: 'supplier-included', values: [1]}
 
 # Testing
 
-This project implements jest for testing. To run the tests, simply run `npm run test`
+This project implements jest for testing. To run the tests, simply run
+
+```js
+npm run test
+```
 
 ## Running tests in debug mode
 
 You can add debugger in your code and run your tests in debug mode by running:
 
-```
+```js
 npm run test:debug
 ```
 
