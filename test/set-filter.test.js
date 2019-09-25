@@ -316,3 +316,26 @@ test('supplierId - when it currently has a supplierId and a SIV id included', ()
   const expectedFilterString = `SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
+
+// When setting to empty value
+test('supplierId - when setting an empty value', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'supplier-included',
+    values: [],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+
+test('SIV ID Included - when setting an empty value', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-included',
+    values: [],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
