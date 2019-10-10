@@ -788,6 +788,16 @@ function setCategoryCodes(subtype, values) {
 
   return updatedCat;
 }
+/**
+ * Returns category object with the value added to the list. If there are existing values, they are preserved.
+ *
+ * @export
+ * @param {object} categoryObject
+ * @param {string} subtype
+ * @param {array} values
+ * @returns {object} Retun the categoryObject with the values appended at the right place
+ */
+
 function addCategoryCodes(categoryObject, subtype, values) {
   // If the value already exists anywhere in categories, remove it
   categoryTypes.forEach(function (type) {
@@ -891,18 +901,22 @@ function convertObjectToString(filter) {
     }
   }
 
-  cleanObject(test)
+  deleteEmptyKeys(test)
   Output: { SIV: { incl: [ 1 ] } }
  */
 
-function cleanObject(obj) {
+function deleteEmptyKeys(obj) {
   var resultObject = {};
   Object.keys(obj).forEach(function (key) {
     if (obj[key].constructor === Object) {
-      resultObject[key] = cleanObject(obj[key]);
+      resultObject[key] = deleteEmptyKeys(obj[key]);
 
       if (isEmpty(resultObject[key])) {
         delete resultObject[key];
+      }
+    } else if (obj[key].constructor === Array) {
+      if (obj[key].length > 0) {
+        resultObject[key] = obj[key];
       }
     } else {
       resultObject[key] = obj[key];
@@ -911,12 +925,20 @@ function cleanObject(obj) {
   return resultObject;
 }
 
+/**
+ * Function to get the index of the first non empty object in the array. This may need cleanup in the future
+ *
+ * @export
+ * @param {array} filterArray
+ * @returns Returns the index of the first non empty object
+ */
+
 function getObjectIndex(filterArray) {
   var result = 0;
   filterArray.forEach(function (f, i) {
     // This can be made faster by defining a function which just checks for non empty
     // instead of cleaning it
-    var cleanF = cleanObject(f);
+    var cleanF = deleteEmptyKeys(f);
 
     if (!isEmpty(cleanF)) {
       result = i;
@@ -926,6 +948,17 @@ function getObjectIndex(filterArray) {
 }
 
 /* eslint-disable no-param-reassign */
+
+/**
+ * Handles the logic of setting the SIV values in the right place on the filter
+ *
+ * @export
+ * @param {object} parsedFilter
+ * @param {array} sivIncluded
+ * @param {string} subtype
+ * @param {array} values
+ * @returns Return the filter object with the siv values set in the right place
+ */
 
 function setSivValues(parsedFilter, sivIncluded, subtype, values) {
   var includedIds = sivIncluded ? sivIncluded.SIV_ATTRIBUTE.id.included : [];
@@ -949,6 +982,9 @@ function setSivValues(parsedFilter, sivIncluded, subtype, values) {
 
   if (subtype === 'id-excluded') {
     var updated = false;
+    var explicitlyExcludedValues = values.filter(function (value) {
+      return !includedIds.includes(value);
+    });
 
     if (sivIncluded) {
       includedIds = includedIds.filter(function (id) {
@@ -958,7 +994,7 @@ function setSivValues(parsedFilter, sivIncluded, subtype, values) {
 
     parsedFilter.forEach(function (f, index) {
       if (parsedFilter[index].SIV_ATTRIBUTE && parsedFilter[index].SIV_ATTRIBUTE.id && parsedFilter[index].SIV_ATTRIBUTE.id.excluded) {
-        parsedFilter[index].SIV_ATTRIBUTE.id.excluded = values;
+        parsedFilter[index].SIV_ATTRIBUTE.id.excluded = explicitlyExcludedValues;
         updated = true;
       }
     });
@@ -968,7 +1004,7 @@ function setSivValues(parsedFilter, sivIncluded, subtype, values) {
       parsedFilter[index] = mergeDeepRight(parsedFilter[index], {
         SIV_ATTRIBUTE: {
           id: {
-            excluded: values
+            excluded: explicitlyExcludedValues
           }
         }
       });
@@ -1000,6 +1036,14 @@ function setSivValues(parsedFilter, sivIncluded, subtype, values) {
   };
 }
 
+/**
+ * Used to extract all the SIV IDs which are included in the filter because they need to be handled differently
+ *
+ * @export
+ * @param {object} parsedFilter
+ * @param {array} sivIncluded
+ * @returns Returns the parsedFilter object and an array of SIV included IDs
+ */
 function extractSivIncluded(parsedFilter, sivIncluded) {
   var updatedSivIncluded = sivIncluded;
   var updatedFilter = parsedFilter.map(function (filter) {
@@ -1110,7 +1154,7 @@ function setFilter(definition, _ref) {
   parsedFilter.forEach(function (filter, index) {
     if (parsedFilter[index].array) {
       var cleanArray = parsedFilter[index].array.map(function (f) {
-        return cleanObject(f);
+        return deleteEmptyKeys(f);
       }).filter(function (f) {
         return !isEmpty(f);
       });
@@ -1157,7 +1201,7 @@ function setFilter(definition, _ref) {
 
 
   parsedFilter = parsedFilter.map(function (f) {
-    return cleanObject(f);
+    return deleteEmptyKeys(f);
   }).filter(function (filter) {
     return !isEmpty(filter);
   });

@@ -179,7 +179,7 @@ test('SIV ID - when it currently does not have an SIV ID attribute excluded but 
     subtype: 'id-excluded',
     values: [siv2, siv3],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]`;
+  const expectedFilterString = `SIV_ATTRIBUTE(id)!=[${siv3}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('SIV ID - when it currently has an SIV ID attribute excluded', () => {
@@ -199,7 +199,7 @@ test('SIV ID - set Excluded - when it has ID included, excluded and category cod
     subtype: 'id-excluded',
     values: [siv2, siv3],
   };
-  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv2},${siv3}]&CATEGORY(true)==["${cat1}"])`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(id)!=[${siv3}]&CATEGORY(true)==["${cat1}"])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 test('SIV ID - set Included - when it has ID included, excluded and category code', () => {
@@ -314,5 +314,38 @@ test('supplierId - when it currently has a supplierId and a SIV id included', ()
     values: [supplier1, supplier2],
   };
   const expectedFilterString = `SIV_ATTRIBUTE(supplier)==[${supplier1},${supplier2}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+test('SIV ID - when it only has SIV IDs and one is removed', () => {
+  const filterString = `SIV_ATTRIBUTE(id)==[${siv1},${siv2},${siv3}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-excluded',
+    values: [siv1],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)==[${siv2},${siv3}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+
+// When setting to empty value
+test('supplierId - when setting an empty value', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'supplier-included',
+    values: [],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
+  expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+});
+
+test('SIV ID Included - when setting an empty value', () => {
+  const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
+  const newFilterObject = {
+    label: 'SIV',
+    subtype: 'id-included',
+    values: [],
+  };
+  const expectedFilterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });

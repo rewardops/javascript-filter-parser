@@ -1,28 +1,27 @@
-Table of Contents
-=================
+# Table of Contents
 
-   * [Working on the parser](#working-on-the-parser)
-      * [Compiling the Grammar to generate the parser](#compiling-the-grammar-to-generate-the-parser)
-      * [Testing in the terminal](#testing-in-the-terminal)
-   * [Library Specification](#library-specification)
-   * [parseFilterString(filterString) ⇒ object](#parsefilterstringfilterstring--object)
-      * [Category Filter With Subcategories](#category-filter-with-subcategories)
-         * [Adding categories](#adding-categories)
-         * [Removing categories](#removing-categories)
-      * [Category Filter Without Subcategories](#category-filter-without-subcategories)
-      * [Other Example Filter Strings](#other-example-filter-strings)
-         * [Items belonging to category codes or certain item IDs](#items-belonging-to-category-codes-or-certain-item-ids)
-         * [Items belonging to category codes but not including certain item IDs](#items-belonging-to-category-codes-but-not-including-certain-item-ids)
-         * [Items belonging to category codes or item IDs but not including certain item IDs](#items-belonging-to-category-codes-or-item-ids-but-not-including-certain-item-ids)
-   * [setFilter(definition, { label,subtype,values }) ⇒ string](#setfilterdefinition--labelsubtypevalues---string)
-      * [CATEGORY](#category)
-         * [subcategory-included](#subcategory-included)
-         * [subcategory-excluded](#subcategory-excluded)
-      * [SIV_ATTRIBUTE](#siv_attribute)
-         * [id-included (<em>special case</em>)](#id-included-special-case)
-         * [id-excluded](#id-excluded)
-         * [supplier-included](#supplier-included)
-   * [Testing](#testing)
+- [Working on the parser](#working-on-the-parser)
+  - [Compiling the Grammar to generate the parser](#compiling-the-grammar-to-generate-the-parser)
+  - [Testing in the terminal](#testing-in-the-terminal)
+- [Library Specification](#library-specification)
+- [parseFilterString(filterString) ⇒ object](#parsefilterstringfilterstring--object)
+  - [Category Filter With Subcategories](#category-filter-with-subcategories)
+    - [Adding categories](#adding-categories)
+    - [Removing categories](#removing-categories)
+  - [Category Filter Without Subcategories](#category-filter-without-subcategories)
+  - [Other Example Filter Strings](#other-example-filter-strings)
+    - [Items belonging to category codes or certain item IDs](#items-belonging-to-category-codes-or-certain-item-ids)
+    - [Items belonging to category codes but not including certain item IDs](#items-belonging-to-category-codes-but-not-including-certain-item-ids)
+    - [Items belonging to category codes or item IDs but not including certain item IDs](#items-belonging-to-category-codes-or-item-ids-but-not-including-certain-item-ids)
+- [setFilter(definition, { label,subtype,values }) ⇒ string](#setfilterdefinition--labelsubtypevalues---string)
+  - [CATEGORY](#category)
+    - [subcategory-included](#subcategory-included)
+    - [subcategory-excluded](#subcategory-excluded)
+  - [SIV_ATTRIBUTE](#siv_attribute)
+    - [id-included (<em>special case</em>)](#id-included-special-case)
+    - [id-excluded](#id-excluded)
+    - [supplier-included](#supplier-included)
+- [Testing](#testing)
 
 # Working on the parser
 
@@ -66,20 +65,21 @@ Existing values for the quantity being set are blown away</p>
 </dd>
 </dl>
 
-
 <a name="parseFilterString"></a>
 
 # parseFilterString(filterString) ⇒ <code>object</code>
+
 Parses the filter string to return a JSON object
 
 **Kind**: global function
 **Returns**: <code>object</code> - - a json representation of the string
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param        | Type                | Description       |
+| ------------ | ------------------- | ----------------- |
 | filterString | <code>string</code> | the filter string |
 
 **Example**
+
 ```js
 parseFilterString('CATEGORY(true)==["abc","cde"]&CATEGORY(false)==["xyz"]&CATEGORY(true)!=["123"]&SIV_ATTRIBUTE(id)==[12,23]&SIV_ATTRIBUTE(id)!=[65,34]')
 
@@ -99,7 +99,6 @@ parseFilterString('CATEGORY(true)==["abc","cde"]&CATEGORY(false)==["xyz"]&CATEGO
   },
 ];
 ```
-
 
 If we break it down to smaller chunks, we get:
 
@@ -264,22 +263,23 @@ const filterArray = [
 ];
 ```
 
-
 <a name="setFilter"></a>
 
 # setFilter(definition, { label,subtype,values }) ⇒ <code>string</code>
+
 Takes a filter string and a json object and updates filter string with the JSON object.
 Existing values for the quantity being set are blown away.
 
 **Kind**: global function
 **Returns**: <code>string</code> - The filter difinition with the values added to the initial definition.
 
-| Param | Type | Description |
-| --- | --- | --- |
-| definition | <code>string</code> | The filter definition to be modified |
+| Param                      | Type                | Description                                                               |
+| -------------------------- | ------------------- | ------------------------------------------------------------------------- |
+| definition                 | <code>string</code> | The filter definition to be modified                                      |
 | { label, subtype, values } | <code>object</code> | An object which specifies what to set on the filter and the values to set |
 
 **Example**
+
 ```js
 setFilter("SIV_ATTRIBUTE(id)=[123]", { label: 'CATEGORY', subtype: 'subcategory-included', values: ["cat1"]})
 
@@ -288,14 +288,15 @@ setFilter("SIV_ATTRIBUTE(id)=[123]", { label: 'CATEGORY', subtype: 'subcategory-
 
 The currently supported labels and the valid subtypes are in this chart.
 
-| Label | Valid Subtypes |
-| --- | --- |
-| `CATEGORY` | `subcategory-included`, `subcategory-excluded`
-| `SIV_ATTRIBUTE` | `id-included`, `id-excluded`, `supplier-included`
+| Label           | Valid Subtypes                                    |
+| --------------- | ------------------------------------------------- |
+| `CATEGORY`      | `subcategory-included`, `subcategory-excluded`    |
+| `SIV_ATTRIBUTE` | `id-included`, `id-excluded`, `supplier-included` |
 
 The following section explains each of these label subtype combinations in further detail with examples.
 
 ## CATEGORY
+
 ### `subcategory-included`
 
 Used to update or set category codes which are to be included in the filter string _**including** their subcategories_. Say the filter initially includes all items with the category code `electronics` and its subcategories. You want to change the filter to include all items which belong to category codes `electricals` and `home-appliances` and their subcategories.
@@ -318,7 +319,6 @@ setFilter(initialDefintion, { label: 'CATEGORY', subtype: 'subcategory-included'
 -> `SIV_ATTRIBUTE(supplier)==["Apple"]&CATEGORY(true)==["electricals", "home-appliances"]`
 ```
 
-
 ### `subcategory-excluded`
 
 Used to update or set category codes which are to be included in the filter string _**excluding** their subcategories_. Say the filter initially includes all items with the category code `electronics` and its subcategories. You want to change the filter to include all items which belong to category codes `electronics2` and `home-appliances` but not their subcategories.
@@ -330,7 +330,9 @@ setFilter(initialDefintion, { label: 'CATEGORY', subtype: 'subcategory-excluded'
 
 -> 'CATEGORY(false)==["electronics2", "home-appliances"]'
 ```
+
 ## SIV_ATTRIBUTE
+
 ### `id-included` (_special case_)
 
 We use this to create a filter which includes all the SIV IDs provided. This is a special case because the other filter strings are all inclusive. For example, your filter may try to get all items belonging to a particular category, say Electronics **AND** is supplied by a particular supplier, say Apple. But in the case of SIV IDs, it is the other conditions **OR** all items with these IDs. It is not an **AND** relationship.
@@ -349,7 +351,6 @@ Note: The resulting filter is joined with an **"|"** which denotes that its an *
 
 If you want to select all items belonging to a particular filter **except** for a few IDs, thats when you use this rule. This will specify a set of SIV ID values to exclude from the filter.
 
-
 ```js
 const initialDef = 'CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==["Apple"]'
 
@@ -364,7 +365,6 @@ Note the difference from the previous filter string. The IDs are denoted with a 
 
 If you have a particular filter but if you want to restrict the filter result only to a list of suppliers, you will use this subtype. For example, say the filter currently returns all items belonging to the category electronics, but you want to just look at the items under electronics provided by the amazing supplier rewardos and say the supplier ID of rewardos was 1.
 
-
 ```js
 const initialDef = 'CATEGORY(true)==["electronics"]'
 
@@ -375,4 +375,20 @@ setFilter(initialDef, { label: 'SIV', subtype: 'supplier-included', values: [1]}
 
 # Testing
 
-This project implements jest for testing. To run the tests, simply run `npm run test`
+This project implements jest for testing. To run the tests, simply run
+
+```js
+npm run test
+```
+
+## Running tests in debug mode
+
+You can add debugger in your code and run your tests in debug mode by running:
+
+```js
+npm run test:debug
+```
+
+It will start the test in debug mode. And then you can go to chrome and go to the inspect tab: `chrome://inspect`, and you will see the debug session under _Remote Targets_. Click on it and it will open another chrome tab with the test running in a debugger. Once the test completes running, you need to close the chrome debug tab for the test to end on the terminal.
+
+More details are here: [ Jest Troubleshooting ](https://jestjs.io/docs/en/troubleshooting)
