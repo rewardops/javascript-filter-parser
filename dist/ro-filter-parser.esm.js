@@ -1207,7 +1207,14 @@ function setFilter(definition, _ref) {
   });
 
   if (sivIncluded && parsedFilter.length) {
-    parsedFilter.push(sivIncluded);
+    // If the filter has only `SIV_ATTRIBUTE(id)!=[values]`, then ORing it with the IDs is essentially
+    // going to return all the items in our system except the excluded ones. Technically correct, but we
+    // don't want that. So if its only included and excluded. Remove the excluded.
+    if (parsedFilter.length === 1 && Object.keys(parsedFilter[0]).length === 1 && parsedFilter[0].SIV_ATTRIBUTE && Object.keys(parsedFilter[0].SIV_ATTRIBUTE).length === 1 && parsedFilter[0].SIV_ATTRIBUTE.id) {
+      parsedFilter = sivIncluded;
+    } else {
+      parsedFilter.push(sivIncluded);
+    }
   }
 
   var convertedFilter = parsedFilter.length ? parsedFilter : sivIncluded;
