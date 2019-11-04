@@ -361,6 +361,8 @@ setFilter(initialDef, { label: 'SIV', subtype: 'id-excluded', values: [123]})
 
 Note the difference from the previous filter string. The IDs are denoted with a **"!="** sign and they are joined with an **&** to denote that this rule works with the existing rules.
 
+NOTE: Another thing to note is that currently, you cannot have a filter definiton with only ID excluded and ID included. In that case, all the ID excluded entries are automatically removed. 
+
 ### `supplier-included`
 
 If you have a particular filter but if you want to restrict the filter result only to a list of suppliers, you will use this subtype. For example, say the filter currently returns all items belonging to the category electronics, but you want to just look at the items under electronics provided by the amazing supplier rewardos and say the supplier ID of rewardos was 1.
