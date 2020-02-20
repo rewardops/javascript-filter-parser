@@ -366,7 +366,7 @@ test('supplierId - when it currently has an supplierId', () => {
     subtype: 'supplier-excluded',
     values: [supplier1, supplier2],
   };
-  const expectedFilterString = `SIV_ATTRIBUTE(supplier)!=[${supplier1},${supplier2}]`;
+  const expectedFilterString = `(SIV_ATTRIBUTE(supplier)==[${supplier3}]&SIV_ATTRIBUTE(supplier)!=[${supplier1},${supplier2}])`;
   expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
 });
 
@@ -403,7 +403,8 @@ test('SIV ID - when it only has SIV IDs and one is removed', () => {
 });
 
 test('SIV ID - when filter has only ID included and ID excluded', () => {
-  const filterString =    'SIV_ATTRIBUTE(id)!=[51036,51037,72970]&(SIV_ATTRIBUTE(id)==[51325,51327,51334,72971,76176,76177,76178,76182,87338])';
+  const filterString =
+    'SIV_ATTRIBUTE(id)!=[51036,51037,72970]&(SIV_ATTRIBUTE(id)==[51325,51327,51334,72971,76176,76177,76178,76182,87338])';
   const newFilterObject = {
     label: 'SIV',
     subtype: 'id-excluded',
@@ -418,7 +419,7 @@ test('supplierId - when setting an empty value', () => {
   const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]|SIV_ATTRIBUTE(id)==[${siv1}]`;
   const newFilterObject = {
     label: 'SIV',
-    subtype: 'supplier-excluded',
+    subtype: 'supplier-included',
     values: [],
   };
   const expectedFilterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
