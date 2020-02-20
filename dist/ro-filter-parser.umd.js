@@ -1029,6 +1029,18 @@
       });
     }
 
+    if (subtype === 'supplier-excluded') {
+      var _index2 = getObjectIndex(parsedFilter);
+
+      parsedFilter[_index2] = mergeDeepRight(parsedFilter[_index2], {
+        SIV_ATTRIBUTE: {
+          supplier: {
+            excluded: values
+          }
+        }
+      });
+    }
+
     var updatedSivIncluded = includedIds.length ? {
       SIV_ATTRIBUTE: {
         id: {
