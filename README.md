@@ -375,6 +375,18 @@ setFilter(initialDef, { label: 'SIV', subtype: 'supplier-included', values: [1]}
 ->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)==[1])'
 ```
 
+### `supplier-excluded`
+
+If you have a particular filter but if you want to restrict the filter result only to exclude a list of suppliers, you will use this subtype. For example, say the filter currently returns all items belonging to the category electronics, but you want to just look at all the items under electronics except items provided by the amazing supplier rewardos and say the supplier ID of rewardos was 1.
+
+```js
+const initialDef = 'CATEGORY(true)==["electronics"]'
+
+setFilter(initialDef, { label: 'SIV', subtype: 'supplier-excluded', values: [1]})
+
+->  '(CATEGORY(true)==["electronics"]&SIV_ATTRIBUTE(supplier)!=[1])'
+
+```
 # Testing
 
 This project implements jest for testing. To run the tests, simply run
