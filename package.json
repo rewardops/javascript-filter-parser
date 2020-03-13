@@ -24,12 +24,14 @@
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "scripts": {
+    "clean": "rimraf dist lib/compiled-grammar/*",
     "compile": "nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js",
     "pretest": "npm run compile",
     "test": "NODE_ENV=test jest",
     "test:debug": "NODE_ENV=test node --inspect-brk node_modules/.bin/jest --runInBand",
-    "prebuild": "rimraf dist; npm run compile",
-    "build": "rollup --config"
+    "prebuild": "npm run clean && npm run compile",
+    "build": "rollup --config",
+    "prepublish": "npm run build && npm run test"
   },
   "author": "RewardOps Inc.",
   "contributors": "Yathirajan Manavalan <yathi@rewardops.com>",
