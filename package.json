@@ -5,7 +5,6 @@
   "main": "dist/ro-filter-parser.umd.js",
   "module": "dist/ro-filter-parser.esm.js",
   "dependencies": {
-    "eslint-config-airbnb": "^17.1.1",
     "moo": "^0.5.0",
     "nearley": "^2.16.0",
     "ramda": "^0.26.1"
@@ -13,6 +12,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.4.5",
     "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
     "jest": "^24.8.0",
