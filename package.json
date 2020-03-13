@@ -33,7 +33,6 @@
     "build": "rollup --config",
     "prepublish": "npm run build && npm run test"
   },
-  "author": "RewardOps Inc.",
-  "contributors": "Yathirajan Manavalan <yathi@rewardops.com>",
+  "author": "Yathirajan Manavalan <yathi@rewardops.com>",
   "license": "MIT"
 }
