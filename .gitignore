@@ -1,6 +1,7 @@
 # compiled
 dist/
 lib/compiled-grammar/
+*railroad.html
 
 # dependencies
 node_modules/
