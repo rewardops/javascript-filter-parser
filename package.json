@@ -1,12 +1,23 @@
 {
-  "name": "ro-filter-parser",
+  "name": "@rewardops/filter-parser",
   "version": "0.1.0",
   "description": "Test parser to work on filters",
+  "license": "MIT",
+  "repository": "github:rewardops/javascript-filter-parser",
+  "author": "Yathirajan Manavalan <yathi@rewardops.com>",
   "main": "dist/ro-filter-parser.umd.js",
   "module": "dist/ro-filter-parser.esm.js",
-  "private": true,
+  "scripts": {
+    "clean": "rimraf dist lib/compiled-grammar/*",
+    "compile": "nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js",
+    "pretest": "npm run compile",
+    "test": "NODE_ENV=test jest",
+    "test:debug": "NODE_ENV=test node --inspect-brk node_modules/.bin/jest --runInBand",
+    "prebuild": "npm run clean && npm run compile",
+    "build": "rollup --config",
+    "prepublish": "npm run build && npm run test"
+  },
   "dependencies": {
-    "eslint-config-airbnb": "^17.1.1",
     "moo": "^0.5.0",
     "nearley": "^2.16.0",
     "ramda": "^0.26.1"
@@ -14,6 +25,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.4.5",
     "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.1",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
     "jest": "^24.8.0",
@@ -23,15 +35,5 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.0.1",
     "rollup-plugin-node-resolve": "^5.2.0"
-  },
-  "scripts": {
-    "compile": "nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js",
-    "pretest": "npm run compile",
-    "test": "NODE_ENV=test jest",
-    "test:debug": "NODE_ENV=test node --inspect-brk node_modules/.bin/jest --runInBand",
-    "prebuild": "rimraf dist; npm run compile",
-    "build": "rollup --config"
-  },
-  "author": "yathi",
-  "license": "ISC"
+  }
 }
