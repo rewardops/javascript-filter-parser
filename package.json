@@ -8,7 +8,7 @@
   "main": "dist/ro-filter-parser.umd.js",
   "module": "dist/ro-filter-parser.esm.js",
   "scripts": {
-    "bootstrap": "shx mkdir lib/compiled-grammar",
+    "bootstrap": "shx mkdir -p lib/compiled-grammar",
     "clean": "shx rm -rf dist lib/compiled-grammar/*",
     "compile": "nearleyc lib/grammar/main.ne -o lib/compiled-grammar/main.js",
     "pretest": "npm run compile",
