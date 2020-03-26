@@ -1,5 +1,4 @@
 # compiled
-lib/compiled-grammar/
 *.html
 
 # dependencies
