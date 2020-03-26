@@ -1,3 +1,5 @@
 # configs
 /.*
 /*.config.*
+test/
+lib/grammar/examples/
