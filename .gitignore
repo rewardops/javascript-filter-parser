@@ -1,5 +1,4 @@
 # compiled
-dist/
 lib/compiled-grammar/
 *.html
 
