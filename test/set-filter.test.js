@@ -364,7 +364,7 @@ describe('Including SIV Supplier', () => {
     expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
   });
   // Emptying filter definition
-  test.skip('supplierId - when it currently has a supplierId and a SIV id included', () => {
+  test.skip('supplierId - when it currently has a supplierId and no SIV ids included', () => {
     const filterString = `SIV_ATTRIBUTE(supplier)==[${supplier3}]`;
     const newFilterObject = {
       label: 'SIV',
