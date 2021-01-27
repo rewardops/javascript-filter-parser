@@ -215,7 +215,16 @@ describe('Excluding SIV ID', () => {
     const expectedFilterString = `SIV_ATTRIBUTE(id)==[${siv2},${siv3}]`;
     expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
   });
-
+  test('SIV ID - when it only has one SIV ID and it is removed', () => {
+    const filterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
+    const newFilterObject = {
+      label: 'SIV',
+      subtype: 'id-excluded',
+      values: [siv1],
+    };
+    const expectedFilterString = null;
+    expect(setFilter(filterString, newFilterObject)).toStrictEqual(expectedFilterString);
+  });
   test('SIV ID - when it currently does not have an SIV ID attribute excluded but has SIV ID included', () => {
     const filterString = `SIV_ATTRIBUTE(id)==[${siv1}]`;
     const newFilterObject = {
