@@ -86,8 +86,8 @@ describe('Invalid inputs', () => {
     ${randomString} | ${''}
     ${[]}           | ${''}
     ${{}}           | ${''}
-    ${undefined}    | ${null}
-    ${null}         | ${null}
+    ${undefined}    | ${''}
+    ${null}         | ${''}
   `('$input returns $expected', ({ input, expected }) => {
     expect(convertObjectToString(input)).toEqual(expected);
   });
