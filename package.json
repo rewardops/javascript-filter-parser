@@ -1,6 +1,6 @@
 {
   "name": "@rewardops/filter-parser",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Test parser to work on filters",
   "license": "MIT",
   "repository": "github:rewardops/javascript-filter-parser",
