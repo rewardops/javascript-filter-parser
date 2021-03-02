@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Bug Fixes
 
-- return default empty filter if convertedFilter is null ([464505b](https://github.com/rewardops/javascript-filter-parser/commit/464505b354e68448ab2e70e119d62a59f717a7a5))
+- return default empty filter if `convertedFilter` is null ([464505b](https://github.com/rewardops/javascript-filter-parser/commit/464505b354e68448ab2e70e119d62a59f717a7a5))
 
 
 ## [0.1.0](https://github.com/rewardops/javascript-filter-parser/compare/ebed6e0e08d5752bf2440e0ad14b46fa9f0d5eb5...v0.1.0)
